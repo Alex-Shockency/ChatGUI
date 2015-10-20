@@ -5,9 +5,9 @@
 package client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import ocsf.client.AbstractClient;
-
 import common.ChatIF;
 
 /**
@@ -28,6 +28,8 @@ public class ChatClient extends AbstractClient {
 	 */
 	ChatIF clientUI;
 	String id;
+	ArrayList<String> blockList = new ArrayList<String>();
+	ArrayList<String> whoblocksmeList= new ArrayList<String>();
 
 	// Constructors ****************************************************
 
@@ -65,7 +67,13 @@ public class ChatClient extends AbstractClient {
 	 */
 	public void handleMessageFromServer(Object msg) {
 		String message = msg.toString();
-		clientUI.display(message);
+		if (message.contains(">")) {
+			if (!blockList.contains(message.substring(0, message.indexOf('>')))) {
+				clientUI.display(message);
+			}
+		} else {
+			clientUI.display(message);
+		}
 	}
 
 	/**
@@ -79,6 +87,9 @@ public class ChatClient extends AbstractClient {
 			if (message.length() != 0) {
 				if (message.charAt(0) == '#') {
 					handleCommand(message);
+					String[] blockArray = blockList
+							.toArray(new String[blockList.size()]);
+					sendToServer(blockArray);
 				} else {
 					sendToServer(message);
 				}
@@ -174,10 +185,46 @@ public class ChatClient extends AbstractClient {
 			case "getport":
 				clientUI.display("PORT: " + Integer.toString(getPort()));
 				break;
+			case "block":
+				if (!argument.isEmpty()) {
+					String name = argument;
+					if (!blockList.contains(name)) {
+						if (name.equals(id)) {
+							clientUI.display("You cannot block the sending of messages to yourself.");
+						} else
+							blockList.add(name);
+					} else {
+						clientUI.display("Messages from " + name
+								+ " are already blocked");
+					}
+				}
+				break;
+			case "unblock":
+				if (!argument.isEmpty()) {
+					String name = argument;
+					if (!blockList.contains(name)) {
+						blockList.remove(name);
+					}
+				} else {
+					blockList.clear();
+				}
+				break;
+			case "whoiblock":
+				if (blockList.size() == 0) {
+					clientUI.display("No blocking is in effect.");
+				} else {
+					for (int i = 0; i < blockList.size(); i++) {
+						clientUI.display("Messages from " + blockList.get(i)
+								+ " are blocked");
+					}
+				}
+				break;
+			case "whoblocksme":
+				
+				break;
 			default:
 				clientUI.display("ERROR - invalid command");
 			}
-
 		}
 	}
 }// End of ChatClient class

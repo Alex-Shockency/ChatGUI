@@ -3,6 +3,8 @@
 // license found at www.lloseng.com 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -48,32 +50,37 @@ public class EchoServer extends AbstractServer {
 	 *            The connection from which the message originated.
 	 */
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
-		String tempMsg = msg.toString();
-		// keeps track of messages sent by user.
-		int msgCount = (int) client.getInfo("Message Count");
-		// Check if loginId is correctly sent
-		loginId(msgCount, tempMsg, client);
-		// print message back to server.
-		System.out.println("Message received: " + msg.toString() + " from "
-				+ client.getInfo("Login Id") + " " + client);
-		if (msgCount == 0) {
-			System.out.println(client.getInfo("Login Id") + " has logged on.");
-			this.sendToAllClients(client.getInfo("Login Id")
-					+ " has logged on.");
+		if (msg instanceof String[]) {
+			String[] tempArray = ((String[]) msg);
+			client.setInfo("Block List", tempArray);
+		} else {
+			String tempMsg = msg.toString();
+			// keeps track of messages sent by user.
+			int msgCount = (int) client.getInfo("Message Count");
+			// Check if loginId is correctly sent
+			loginId(msgCount, tempMsg, client);
+			// print message back to server.
+			System.out.println("Message received: " + msg.toString() + " from "
+					+ client.getInfo("Login Id") + " " + client);
+			if (msgCount == 0) {
+				System.out.println(client.getInfo("Login Id")
+						+ " has logged on.");
+				this.sendToAllClients(client.getInfo("Login Id")
+						+ " has logged on.");
+			}
+			if (msgCount != 0) {
+				if (tempMsg.trim().equals("#logoff")) {
+					try {
+						client.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else
+					this.sendToAllClients(client.getInfo("Login Id") + "> "
+							+ tempMsg);
+			}
+			client.setInfo("Message Count", msgCount + 1);
 		}
-		if (msgCount != 0) {
-			if (tempMsg.trim().equals("#logoff")) {
-				try {
-					client.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else
-				this.sendToAllClients(client.getInfo("Login Id") + "> "
-						+ tempMsg);
-		}
-		client.setInfo("Message Count", msgCount + 1);
-
 	}
 
 	/**
@@ -126,8 +133,7 @@ public class EchoServer extends AbstractServer {
 						message.substring(7, message.length()));
 			}
 
-		}
-		else if (msgCount == 0 && !message.startsWith("#login")) {
+		} else if (msgCount == 0 && !message.startsWith("#login")) {
 			try {
 				client.sendToClient("ERROR - No login ID specified.  Connection aborted.");
 			} catch (IOException e1) {
