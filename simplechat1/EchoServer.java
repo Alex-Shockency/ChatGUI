@@ -60,11 +60,12 @@ public class EchoServer extends AbstractServer {
 			// Check if loginId is correctly sent
 			loginId(msgCount, tempMsg, client);
 			// print message back to server.
+			if(!client.getInfo("Login Id").equals("server"))
+			{
 			System.out.println("Message received: " + msg.toString() + " from "
 					+ client.getInfo("Login Id") + " " + client);
+			}
 			if (msgCount == 0) {
-				System.out.println(client.getInfo("Login Id")
-						+ " has logged on.");
 				this.sendToAllClients(client.getInfo("Login Id")
 						+ " has logged on.");
 			}
@@ -75,9 +76,17 @@ public class EchoServer extends AbstractServer {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				} else
-					this.sendToAllClients(client.getInfo("Login Id") + "> "
-							+ tempMsg);
+				} else{
+					if(client.getInfo("Login Id").equals("server"))
+					{
+						this.sendToAllClients("SERVER MSG" + "> "
+								+ tempMsg);
+					}
+					else{
+						this.sendToAllClients(client.getInfo("Login Id") + "> "
+								+ tempMsg);
+					}
+				}
 			}
 			client.setInfo("Message Count", msgCount + 1);
 		}

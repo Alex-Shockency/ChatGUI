@@ -69,7 +69,15 @@ public class ChatClient extends AbstractClient {
 		String message = msg.toString();
 		if (message.contains(">")) {
 			if (!blockList.contains(message.substring(0, message.indexOf('>')))) {
-				clientUI.display(message);
+				if(blockList.contains("server"))
+				{
+					if(!message.substring(0, message.indexOf('>')).equals("SERVER MSG"))
+					{
+						clientUI.display(message);
+					}
+				}
+				else
+					clientUI.display(message);
 			}
 		} else {
 			clientUI.display(message);
@@ -202,7 +210,7 @@ public class ChatClient extends AbstractClient {
 			case "unblock":
 				if (!argument.isEmpty()) {
 					String name = argument;
-					if (!blockList.contains(name)) {
+					if (blockList.contains(name)) {
 						blockList.remove(name);
 					}
 				} else {

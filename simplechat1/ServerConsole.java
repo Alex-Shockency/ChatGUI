@@ -2,20 +2,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import client.ChatClient;
 import common.ChatIF;
 
 public class ServerConsole implements ChatIF {
 	final public static int DEFAULT_PORT = 5555;
 	EchoServer server;
-
 	@Override
 	public void display(String message) {
-		System.out.println("> " + message);
+		
 	}
 
 	public ServerConsole(String host, int port) {
 		try {
-			// client= new ChatClient("server", host, port, this);
 			server = new EchoServer(port);
 			server.listen();
 		} catch (Exception e) {
@@ -37,6 +36,8 @@ public class ServerConsole implements ChatIF {
 			while (true) {
 				message = fromConsole.readLine();
 				handleServerCommand(message, port);
+				System.out.println("SERVER MSG"+"> "+message);
+				server.sendToAllClients("SERVER MSG"+"> "+message);
 			}// end while(true)
 		} catch (Exception ex) {
 			System.out.println("Unexpected error while reading from console!");
@@ -104,12 +105,6 @@ public class ServerConsole implements ChatIF {
 		case "#getport":
 			System.out.println("Current port: " + server.getPort());
 			break;
-		}
-		if (message.length() != 0) {
-			if (message.trim().charAt(0) != '#') {
-				server.sendToAllClients("SERVER MSG> " + message);
-				System.out.println("SERVER MSG> " + message);
-			}
 		}
 	}// end handleServerCommand(String message,int port)
 
