@@ -1,8 +1,13 @@
+
 // This file contains material supporting section 3.7 of the textbook:
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -24,6 +29,8 @@ public class EchoServer extends AbstractServer {
 	 * The default port to listen on.
 	 */
 	final public static int DEFAULT_PORT = 5555;
+	HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
+	ArrayList<String> whoblocksMe = new ArrayList<String>();
 
 	// Constructors ****************************************************
 
@@ -48,32 +55,40 @@ public class EchoServer extends AbstractServer {
 	 *            The connection from which the message originated.
 	 */
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
-		String tempMsg = msg.toString();
-		// keeps track of messages sent by user.
-		int msgCount = (int) client.getInfo("Message Count");
-		// Check if loginId is correctly sent
-		loginId(msgCount, tempMsg, client);
-		// print message back to server.
-		System.out.println("Message received: " + msg.toString() + " from "
-				+ client.getInfo("Login Id") + " " + client);
-		if (msgCount == 0) {
-			System.out.println(client.getInfo("Login Id") + " has logged on.");
-			this.sendToAllClients(client.getInfo("Login Id")
-					+ " has logged on.");
-		}
-		if (msgCount != 0) {
-			if (tempMsg.trim().equals("#logoff")) {
-				try {
-					client.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+		if (msg instanceof String[]) {
+			String[] tempArray = ((String[]) msg);
+			blockLists.put((String) client.getInfo("Login Id"), tempArray);
+		} else {
+			String tempMsg = msg.toString();
+			// keeps track of messages sent by user.
+			int msgCount = (int) client.getInfo("Message Count");
+			// Check if loginId is correctly sent
+			loginId(msgCount, tempMsg, client);
+			// print message back to server.
+			System.out.println(
+					"Message received: " + msg.toString() + " from " + client.getInfo("Login Id") + " " + client);
+			if (msgCount == 0) {
+				this.sendToAllClients(client.getInfo("Login Id") + " has logged on.");
+			}
+			if (msgCount != 0) {
+				if (tempMsg.trim().equals("#logoff")) {
+					try {
+						client.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else if (tempMsg.trim().equals("#whoblocksme")) {
+					whoblocksMe(client);
+				} else {
+					if (client.getInfo("Login Id").equals("server")) {
+						this.sendToAllClients("SERVER MSG" + "> " + tempMsg);
+					} else {
+						this.sendToAllClients(client.getInfo("Login Id") + "> " + tempMsg);
+					}
 				}
-			} else
-				this.sendToAllClients(client.getInfo("Login Id") + "> "
-						+ tempMsg);
+			}
+			client.setInfo("Message Count", msgCount + 1);
 		}
-		client.setInfo("Message Count", msgCount + 1);
-
 	}
 
 	/**
@@ -81,8 +96,7 @@ public class EchoServer extends AbstractServer {
 	 * starts listening for connections.
 	 */
 	protected void serverStarted() {
-		System.out.println("Server listening for connections on port "
-				+ getPort());
+		System.out.println("Server listening for connections on port " + getPort());
 	}
 
 	/**
@@ -96,8 +110,7 @@ public class EchoServer extends AbstractServer {
 	@Override
 	protected void clientConnected(ConnectionToClient client) {
 		client.setInfo("Message Count", 0);
-		System.out
-				.println("A new client is attempting to connect to the server.");
+		System.out.println("A new client is attempting to connect to the server.");
 	}
 
 	@Override
@@ -122,12 +135,10 @@ public class EchoServer extends AbstractServer {
 	private void loginId(int msgCount, String message, ConnectionToClient client) {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
-				client.setInfo("Login Id",
-						message.substring(7, message.length()));
+				client.setInfo("Login Id", message.substring(7, message.length()));
 			}
 
-		}
-		else if (msgCount == 0 && !message.startsWith("#login")) {
+		} else if (msgCount == 0 && !message.startsWith("#login")) {
 			try {
 				client.sendToClient("ERROR - No login ID specified.  Connection aborted.");
 			} catch (IOException e1) {
@@ -136,6 +147,31 @@ public class EchoServer extends AbstractServer {
 			try {
 				client.close();
 			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void whoblocksMe(ConnectionToClient client) {
+		for (Entry<String, String[]> entry : blockLists.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			String[] tempValues = (String[]) value;
+			System.out.println("key: " + key);
+			System.out.println("value: " + Arrays.toString((String[]) value));
+			if (!key.equals(client.getInfo("Login Id"))) {
+				for (int i = 0; i < tempValues.length; i++) {
+					if (tempValues[i].equals(client.getInfo("Login Id"))) {
+						whoblocksMe.add(key);
+					}
+				}
+			}
+		}
+		for (int i = 0; i < whoblocksMe.size(); i++) {
+			try {
+				client.sendToClient("Messages to " + whoblocksMe.get(i) + " are being blocked");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

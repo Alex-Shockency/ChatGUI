@@ -5,10 +5,10 @@
 package client;
 
 import java.io.IOException;
-
-import ocsf.client.AbstractClient;
+import java.util.ArrayList;
 
 import common.ChatIF;
+import ocsf.client.AbstractClient;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
@@ -28,6 +28,7 @@ public class ChatClient extends AbstractClient {
 	 */
 	ChatIF clientUI;
 	String id;
+	ArrayList<String> blockList = new ArrayList<String>();
 
 	// Constructors ****************************************************
 
@@ -42,8 +43,7 @@ public class ChatClient extends AbstractClient {
 	 *            The interface type variable.
 	 */
 
-	public ChatClient(String login, String host, int port, ChatIF clientUI)
-			throws IOException {
+	public ChatClient(String login, String host, int port, ChatIF clientUI) throws IOException {
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
 		id = login;
@@ -64,8 +64,23 @@ public class ChatClient extends AbstractClient {
 	 *            The message from the server.
 	 */
 	public void handleMessageFromServer(Object msg) {
-		String message = msg.toString();
-		clientUI.display(message);
+		if (msg instanceof String[]) {
+			// String[] tempArray = (String[]) msg;
+		} else {
+			String message = msg.toString();
+			if (message.contains(">")) {
+				if (!blockList.contains(message.substring(0, message.indexOf('>')))) {
+					if (blockList.contains("server")) {
+						if (!message.substring(0, message.indexOf('>')).equals("SERVER MSG")) {
+							clientUI.display(message);
+						}
+					} else
+						clientUI.display(message);
+				}
+			} else if (!message.equals("#logoff")) {
+				clientUI.display(message);
+			}
+		}
 	}
 
 	/**
@@ -79,6 +94,9 @@ public class ChatClient extends AbstractClient {
 			if (message.length() != 0) {
 				if (message.charAt(0) == '#') {
 					handleCommand(message);
+					String[] blockArray = blockList.toArray(new String[blockList.size()]);
+					if (!message.equals("#logoff"))
+						sendToServer(blockArray);
 				} else {
 					sendToServer(message);
 				}
@@ -174,10 +192,44 @@ public class ChatClient extends AbstractClient {
 			case "getport":
 				clientUI.display("PORT: " + Integer.toString(getPort()));
 				break;
+			case "block":
+				if (!argument.isEmpty()) {
+					String name = argument;
+					if (!blockList.contains(name)) {
+						if (name.equals(id)) {
+							clientUI.display("You cannot block the sending of messages to yourself.");
+						} else
+							blockList.add(name);
+					} else {
+						clientUI.display("Messages from " + name + " are already blocked");
+					}
+				}
+				break;
+			case "unblock":
+				if (!argument.isEmpty()) {
+					String name = argument;
+					if (blockList.contains(name)) {
+						blockList.remove(name);
+					}
+				} else {
+					blockList.clear();
+				}
+				break;
+			case "whoiblock":
+				if (blockList.size() == 0) {
+					clientUI.display("No blocking is in effect.");
+				} else {
+					for (int i = 0; i < blockList.size(); i++) {
+						clientUI.display("Messages from " + blockList.get(i) + " are blocked");
+					}
+				}
+				break;
+			case "whoblocksme":
+				sendToServer("#whoblocksme");
+				break;
 			default:
 				clientUI.display("ERROR - invalid command");
 			}
-
 		}
 	}
 }// End of ChatClient class
