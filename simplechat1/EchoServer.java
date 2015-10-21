@@ -31,6 +31,7 @@ public class EchoServer extends AbstractServer {
 	final public static int DEFAULT_PORT = 5555;
 	HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
 	ArrayList<String> whoblocksMe = new ArrayList<String>();
+	ArrayList<String> currentUsers= new ArrayList<String>();
 
 	// Constructors ****************************************************
 
@@ -59,6 +60,7 @@ public class EchoServer extends AbstractServer {
 			String[] tempArray = ((String[]) msg);
 			blockLists.put((String) client.getInfo("Login Id"), tempArray);
 		} else {
+			
 			String tempMsg = msg.toString();
 			// keeps track of messages sent by user.
 			int msgCount = (int) client.getInfo("Message Count");
@@ -79,7 +81,8 @@ public class EchoServer extends AbstractServer {
 					}
 				} else if (tempMsg.trim().equals("#whoblocksme")) {
 					whoblocksMe(client);
-				} else {
+				}
+				else {
 					if (client.getInfo("Login Id").equals("server")) {
 						this.sendToAllClients("SERVER MSG" + "> " + tempMsg);
 					} else {
@@ -115,6 +118,7 @@ public class EchoServer extends AbstractServer {
 
 	@Override
 	synchronized protected void clientDisconnected(ConnectionToClient client) {
+		currentUsers.remove((String) client.getInfo("Login Id"));
 		System.out.println(client.getInfo("Login Id") + " has disconnected.");
 	}
 
@@ -136,6 +140,16 @@ public class EchoServer extends AbstractServer {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
 				client.setInfo("Login Id", message.substring(7, message.length()));
+				System.out.println((String) client.getInfo("Login Id"));
+				currentUsers.add((String) client.getInfo("Login Id"));
+				String [] tempArray=new String[currentUsers.size()];
+				tempArray = currentUsers.toArray(tempArray);
+				try {
+					client.sendToClient(tempArray);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 		} else if (msgCount == 0 && !message.startsWith("#login")) {
@@ -157,11 +171,10 @@ public class EchoServer extends AbstractServer {
 			String key = entry.getKey();
 			Object value = entry.getValue();
 			String[] tempValues = (String[]) value;
-			System.out.println("key: " + key);
-			System.out.println("value: " + Arrays.toString((String[]) value));
 			if (!key.equals(client.getInfo("Login Id"))) {
 				for (int i = 0; i < tempValues.length; i++) {
 					if (tempValues[i].equals(client.getInfo("Login Id"))) {
+						if(!whoblocksMe.contains(key))
 						whoblocksMe.add(key);
 					}
 				}
