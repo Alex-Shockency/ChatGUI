@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -12,9 +13,9 @@ public class ServerConsole implements ChatIF {
 		
 	}
 
-	public ServerConsole(String host, int port) {
+	public ServerConsole(String host,File file, int port) {
 		try {
-			server = new EchoServer(port);
+			server = new EchoServer(file,port);
 			server.listen();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -109,28 +110,38 @@ public class ServerConsole implements ChatIF {
 
 	public static void main(String[] args) {
 		String host = "";
+		File file=null;
 		int port = 0; // The port number
-		if (args.length == 2) {
+		if (args.length == 3) {
 			try {
-				host = args[0];
+				file =new File(args[0]);
+				host = args[2];
 				port = Integer.parseInt(args[1]); // Get port from command line
 			} catch (Throwable t) {
 				host = args[1];
 				port = DEFAULT_PORT; // Set port to 5555
 			}
 		}
-		if (args.length == 1) {
+		if (args.length == 2) {
 			try {
-				port = Integer.parseInt(args[0]); // Get port from command line
+				file=new File(args[0]);
+				port = Integer.parseInt(args[1]); // Get port from command line
 			} catch (Throwable t) {
-				host = args[0];
+				host = args[1];
 				port = DEFAULT_PORT; // Set port to 5555
 			}
 		} else {
+			try{
+				file=new File(args[0]);
+			}
+			catch(Exception e){
+				System.out.println("Error - No validUsers file specified.");
+				System.exit(1);
+			}
 			host = "localhost";
 			port = DEFAULT_PORT; // Set port to 5555
 		}
-		ServerConsole serverchat = new ServerConsole(host, port);
+		ServerConsole serverchat = new ServerConsole(host,file, port);
 		serverchat.accept(); // Wait for console data
 	}
 }// end class

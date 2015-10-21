@@ -3,11 +3,14 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -31,7 +34,7 @@ public class EchoServer extends AbstractServer {
 	final public static int DEFAULT_PORT = 5555;
 	HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
 	ArrayList<String> whoblocksMe = new ArrayList<String>();
-	ArrayList<String> currentUsers= new ArrayList<String>();
+	ArrayList<String> validUsers = new ArrayList<String>();
 
 	// Constructors ****************************************************
 
@@ -41,8 +44,9 @@ public class EchoServer extends AbstractServer {
 	 * @param port
 	 *            The port number to connect on.
 	 */
-	public EchoServer(int port) {
+	public EchoServer(File file,int port) {
 		super(port);
+		readValidList(file);
 	}
 
 	// Instance methods ************************************************
@@ -60,13 +64,9 @@ public class EchoServer extends AbstractServer {
 			String[] tempArray = ((String[]) msg);
 			blockLists.put((String) client.getInfo("Login Id"), tempArray);
 		} else {
-			
 			String tempMsg = msg.toString();
-			// keeps track of messages sent by user.
 			int msgCount = (int) client.getInfo("Message Count");
-			// Check if loginId is correctly sent
 			loginId(msgCount, tempMsg, client);
-			// print message back to server.
 			System.out.println(
 					"Message received: " + msg.toString() + " from " + client.getInfo("Login Id") + " " + client);
 			if (msgCount == 0) {
@@ -81,8 +81,7 @@ public class EchoServer extends AbstractServer {
 					}
 				} else if (tempMsg.trim().equals("#whoblocksme")) {
 					whoblocksMe(client);
-				}
-				else {
+				} else {
 					if (client.getInfo("Login Id").equals("server")) {
 						this.sendToAllClients("SERVER MSG" + "> " + tempMsg);
 					} else {
@@ -118,7 +117,6 @@ public class EchoServer extends AbstractServer {
 
 	@Override
 	synchronized protected void clientDisconnected(ConnectionToClient client) {
-		currentUsers.remove((String) client.getInfo("Login Id"));
 		System.out.println(client.getInfo("Login Id") + " has disconnected.");
 	}
 
@@ -140,16 +138,19 @@ public class EchoServer extends AbstractServer {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
 				client.setInfo("Login Id", message.substring(7, message.length()));
-				System.out.println((String) client.getInfo("Login Id"));
-				currentUsers.add((String) client.getInfo("Login Id"));
-				String [] tempArray=new String[currentUsers.size()];
-				tempArray = currentUsers.toArray(tempArray);
+				// adds users that have logged in to a list of valid users
+				// converts arraylist to string array and sends to client
+				// ------------------------------------------------------
+				validUsers.add((String) client.getInfo("Login Id"));
+				String[] tempArray = new String[validUsers.size()];
+				tempArray = validUsers.toArray(tempArray);
 				try {
 					client.sendToClient(tempArray);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				// -------------------------------------------------------
 			}
 
 		} else if (msgCount == 0 && !message.startsWith("#login")) {
@@ -166,6 +167,13 @@ public class EchoServer extends AbstractServer {
 		}
 	}
 
+	/**
+	 * This method iterates through the blockLists Hashmap and adds the users
+	 * that are currently blocking the client to the whoblockme list.
+	 * 
+	 * @param client
+	 *            - used to send messages to the client.
+	 */
 	private void whoblocksMe(ConnectionToClient client) {
 		for (Entry<String, String[]> entry : blockLists.entrySet()) {
 			String key = entry.getKey();
@@ -174,8 +182,8 @@ public class EchoServer extends AbstractServer {
 			if (!key.equals(client.getInfo("Login Id"))) {
 				for (int i = 0; i < tempValues.length; i++) {
 					if (tempValues[i].equals(client.getInfo("Login Id"))) {
-						if(!whoblocksMe.contains(key))
-						whoblocksMe.add(key);
+						if (!whoblocksMe.contains(key))
+							whoblocksMe.add(key);
 					}
 				}
 			}
@@ -190,6 +198,21 @@ public class EchoServer extends AbstractServer {
 		}
 	}
 
+	private void readValidList(File file) {
+		try {
+			Scanner reader = new Scanner(file);
+			String line;
+			while (reader.hasNextLine()) {
+				line = reader.nextLine().trim();
+				validUsers.add(line);
+			}
+			reader.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error - File not found");
+		}
+		
+	}
+
 	/**
 	 * This method is responsible for the creation of the server instance (there
 	 * is no UI in this phase).
@@ -200,18 +223,25 @@ public class EchoServer extends AbstractServer {
 	 */
 	public static void main(String[] args) {
 		int port = 0; // Port to listen on
+		File file = null;
 		try {
-			port = Integer.parseInt(args[0]); // Get port from command line
+			try{
+			file = new File(args[0]);
+			}
+			catch(Exception e){
+				System.out.println("Error - No validUsers file specified.");
+			}
+			port = Integer.parseInt(args[1]); // Get port from command line
 		} catch (Throwable t) {
 			port = DEFAULT_PORT; // Set port to 5555
 		}
-		EchoServer sv = new EchoServer(port);
+
+		EchoServer sv = new EchoServer(file,port);
 		try {
 			sv.listen(); // Start listening for connections
 		} catch (Exception ex) {
 			System.out.println("ERROR - Could not listen for clients!");
 		}
 	}
-
 }
 // End of EchoServer class
