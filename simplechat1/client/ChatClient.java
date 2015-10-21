@@ -6,6 +6,7 @@ package client;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import common.ChatIF;
 import ocsf.client.AbstractClient;
@@ -29,6 +30,7 @@ public class ChatClient extends AbstractClient {
 	ChatIF clientUI;
 	String id;
 	ArrayList<String> blockList = new ArrayList<String>();
+	String [] currentUsers;
 
 	// Constructors ****************************************************
 
@@ -65,7 +67,7 @@ public class ChatClient extends AbstractClient {
 	 */
 	public void handleMessageFromServer(Object msg) {
 		if (msg instanceof String[]) {
-			// String[] tempArray = (String[]) msg;
+			currentUsers=(String[]) msg;
 		} else {
 			String message = msg.toString();
 			if (message.contains(">")) {
@@ -198,7 +200,12 @@ public class ChatClient extends AbstractClient {
 					if (!blockList.contains(name)) {
 						if (name.equals(id)) {
 							clientUI.display("You cannot block the sending of messages to yourself.");
-						} else
+						}
+						else if(!Arrays.asList(currentUsers).contains(name))
+						{
+							clientUI.display("User "+name+" does not exist.");
+						}
+						else
 							blockList.add(name);
 					} else {
 						clientUI.display("Messages from " + name + " are already blocked");
