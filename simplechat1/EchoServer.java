@@ -140,16 +140,10 @@ public class EchoServer extends AbstractServer {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
 				client.setInfo("Login Id", message.substring(7, message.length()));
-				System.out.println((String) client.getInfo("Login Id"));
 				currentUsers.add((String) client.getInfo("Login Id"));
 				String [] tempArray=new String[currentUsers.size()];
 				tempArray = currentUsers.toArray(tempArray);
-				try {
-					client.sendToClient(tempArray);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				this.sendToAllClients((tempArray));
 			}
 
 		} else if (msgCount == 0 && !message.startsWith("#login")) {
@@ -167,6 +161,7 @@ public class EchoServer extends AbstractServer {
 	}
 
 	private void whoblocksMe(ConnectionToClient client) {
+		whoblocksMe.clear();
 		for (Entry<String, String[]> entry : blockLists.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
@@ -178,6 +173,15 @@ public class EchoServer extends AbstractServer {
 						whoblocksMe.add(key);
 					}
 				}
+			}
+		}
+		if(whoblocksMe.isEmpty())
+		{
+			try {
+				client.sendToClient("No one is currently blocking you");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		for (int i = 0; i < whoblocksMe.size(); i++) {
