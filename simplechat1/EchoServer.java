@@ -1,20 +1,14 @@
-
 // This file contains material supporting section 3.7 of the textbook:
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.StringTokenizer;
-
-import javax.swing.Timer;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -37,10 +31,9 @@ public class EchoServer extends AbstractServer {
 	 */
 	final public static int DEFAULT_PORT = 5555;
 	HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
-	HashMap<String,String> loginInfo=new HashMap<String,String>();
 	ArrayList<String> whoblocksMe = new ArrayList<String>();
-	ArrayList<String> currentUsers= new ArrayList<String>();
-	
+	ArrayList<String> currentUsers = new ArrayList<String>();
+
 	// Constructors ****************************************************
 
 	/**
@@ -74,10 +67,11 @@ public class EchoServer extends AbstractServer {
 			// Check if loginId is correctly sent
 			loginId(msgCount, tempMsg, client);
 			// print message back to server.
-			System.out.println(
-					"Message received: " + msg.toString() + " from " + client.getInfo("Login Id") + " " + client);
+			System.out.println("Message received: " + msg.toString() + " from "
+					+ client.getInfo("Login Id") + " " + client);
 			if (msgCount == 0) {
-				this.sendToAllClients(client.getInfo("Login Id") + " has logged on.");
+				this.sendToAllClients(client.getInfo("Login Id")
+						+ " has logged on.");
 			}
 			if (msgCount != 0) {
 				if (tempMsg.trim().equals("#logoff")) {
@@ -89,9 +83,9 @@ public class EchoServer extends AbstractServer {
 					}
 				} else if (tempMsg.trim().equals("#whoblocksme")) {
 					whoblocksMe(client);
-				}
-				else {
-						this.sendToAllClients(client.getInfo("Login Id") + "> " + tempMsg);
+				} else {
+					this.sendToAllClients(client.getInfo("Login Id") + "> "
+							+ tempMsg);
 				}
 			}
 			client.setInfo("Message Count", msgCount + 1);
@@ -103,7 +97,8 @@ public class EchoServer extends AbstractServer {
 	 * starts listening for connections.
 	 */
 	protected void serverStarted() {
-		System.out.println("Server listening for connections on port " + getPort());
+		System.out.println("Server listening for connections on port "
+				+ getPort());
 	}
 
 	/**
@@ -117,7 +112,8 @@ public class EchoServer extends AbstractServer {
 	@Override
 	protected void clientConnected(ConnectionToClient client) {
 		client.setInfo("Message Count", 0);
-		System.out.println("A new client is attempting to connect to the server.");
+		System.out
+				.println("A new client is attempting to connect to the server.");
 	}
 
 	@Override
@@ -144,9 +140,10 @@ public class EchoServer extends AbstractServer {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
 				client.setInfo("Status", "online");
-				client.setInfo("Login Id", message.substring(7, message.length()));
+				client.setInfo("Login Id",
+						message.substring(7, message.length()));
 				currentUsers.add((String) client.getInfo("Login Id"));
-				String [] tempArray=new String[currentUsers.size()];
+				String[] tempArray = new String[currentUsers.size()];
 				tempArray = currentUsers.toArray(tempArray);
 				this.sendToAllClients((tempArray));
 			}
@@ -174,14 +171,13 @@ public class EchoServer extends AbstractServer {
 			if (!key.equals(client.getInfo("Login Id"))) {
 				for (int i = 0; i < tempValues.length; i++) {
 					if (tempValues[i].equals(client.getInfo("Login Id"))) {
-						if(!whoblocksMe.contains(key))
-						whoblocksMe.add(key);
+						if (!whoblocksMe.contains(key))
+							whoblocksMe.add(key);
 					}
 				}
 			}
 		}
-		if(whoblocksMe.isEmpty())
-		{
+		if (whoblocksMe.isEmpty()) {
 			try {
 				client.sendToClient("No one is currently blocking you");
 			} catch (IOException e) {
@@ -191,28 +187,25 @@ public class EchoServer extends AbstractServer {
 		}
 		for (int i = 0; i < whoblocksMe.size(); i++) {
 			try {
-				client.sendToClient("Messages to " + whoblocksMe.get(i) + " are being blocked");
+				client.sendToClient("Messages to " + whoblocksMe.get(i)
+						+ " are being blocked");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	public void readvalidUsers(File file)
-	{
-		try{
-			Scanner reader=new Scanner(file);
-			String user;
-			while(reader.hasNextLine())
-			{
-				user=reader.nextLine().trim();
-				currentUsers.add(user);
+
+	public void readvalidUsers(File file) {
+		try {
+			Scanner reader = new Scanner(file);
+			String line;
+			while (reader.hasNextLine()) {
+				line = reader.nextLine();
+				currentUsers.add(line);
 			}
 			reader.close();
-		}
-		catch (FileNotFoundException e)
-		{
+		} catch (FileNotFoundException e) {
 			System.out.println("ERROR - File not found");
 		}
 	}
@@ -229,7 +222,7 @@ public class EchoServer extends AbstractServer {
 		int port = 0; // Port to listen on
 		try {
 			port = Integer.parseInt(args[0]); // Get port from command line
-			
+
 		} catch (Throwable t) {
 			port = DEFAULT_PORT; // Set port to 5555
 		}

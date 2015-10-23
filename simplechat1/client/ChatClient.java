@@ -8,8 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import common.ChatIF;
 import ocsf.client.AbstractClient;
+
+import common.ChatIF;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
@@ -28,7 +29,7 @@ public class ChatClient extends AbstractClient {
 	 * method in the client.
 	 */
 	ChatIF clientUI;
-	String id;
+	String id;String Password;
 	ArrayList<String> blockList = new ArrayList<String>();
 	String [] currentUsers;
 
@@ -70,6 +71,7 @@ public class ChatClient extends AbstractClient {
 			currentUsers=(String[]) msg;
 		} else {
 			String message = msg.toString();
+			
 			if (message.contains(">")) {
 				if (!blockList.contains(message.substring(0, message.indexOf('>')))) {
 					if (blockList.contains("server")) {
@@ -79,8 +81,6 @@ public class ChatClient extends AbstractClient {
 					} else
 						clientUI.display(message);
 				}
-			} else if (!message.equals("#logoff")) {
-				clientUI.display(message);
 			}
 		}
 	}
@@ -98,7 +98,9 @@ public class ChatClient extends AbstractClient {
 					handleCommand(message);
 					String[] blockArray = blockList.toArray(new String[blockList.size()]);
 					if (!message.equals("#logoff"))
+					{
 						sendToServer(blockArray);
+					}
 				} else {
 					sendToServer(message);
 				}
