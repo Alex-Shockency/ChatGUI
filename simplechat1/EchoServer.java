@@ -3,11 +3,18 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+import javax.swing.Timer;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -30,9 +37,10 @@ public class EchoServer extends AbstractServer {
 	 */
 	final public static int DEFAULT_PORT = 5555;
 	HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
+	HashMap<String,String> loginInfo=new HashMap<String,String>();
 	ArrayList<String> whoblocksMe = new ArrayList<String>();
 	ArrayList<String> currentUsers= new ArrayList<String>();
-
+	
 	// Constructors ****************************************************
 
 	/**
@@ -60,7 +68,6 @@ public class EchoServer extends AbstractServer {
 			String[] tempArray = ((String[]) msg);
 			blockLists.put((String) client.getInfo("Login Id"), tempArray);
 		} else {
-			
 			String tempMsg = msg.toString();
 			// keeps track of messages sent by user.
 			int msgCount = (int) client.getInfo("Message Count");
@@ -76,6 +83,7 @@ public class EchoServer extends AbstractServer {
 				if (tempMsg.trim().equals("#logoff")) {
 					try {
 						client.close();
+						client.setInfo("Status", "offline");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -83,11 +91,7 @@ public class EchoServer extends AbstractServer {
 					whoblocksMe(client);
 				}
 				else {
-					if (client.getInfo("Login Id").equals("server")) {
-						this.sendToAllClients("SERVER MSG" + "> " + tempMsg);
-					} else {
 						this.sendToAllClients(client.getInfo("Login Id") + "> " + tempMsg);
-					}
 				}
 			}
 			client.setInfo("Message Count", msgCount + 1);
@@ -139,6 +143,7 @@ public class EchoServer extends AbstractServer {
 	private void loginId(int msgCount, String message, ConnectionToClient client) {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
+				client.setInfo("Status", "online");
 				client.setInfo("Login Id", message.substring(7, message.length()));
 				currentUsers.add((String) client.getInfo("Login Id"));
 				String [] tempArray=new String[currentUsers.size()];
@@ -193,6 +198,24 @@ public class EchoServer extends AbstractServer {
 			}
 		}
 	}
+	
+	public void readvalidUsers(File file)
+	{
+		try{
+			Scanner reader=new Scanner(file);
+			String user;
+			while(reader.hasNextLine())
+			{
+				user=reader.nextLine().trim();
+				currentUsers.add(user);
+			}
+			reader.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			System.out.println("ERROR - File not found");
+		}
+	}
 
 	/**
 	 * This method is responsible for the creation of the server instance (there
@@ -206,6 +229,7 @@ public class EchoServer extends AbstractServer {
 		int port = 0; // Port to listen on
 		try {
 			port = Integer.parseInt(args[0]); // Get port from command line
+			
 		} catch (Throwable t) {
 			port = DEFAULT_PORT; // Set port to 5555
 		}
