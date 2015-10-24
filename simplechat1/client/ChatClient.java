@@ -4,12 +4,16 @@
 
 package client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
+
+import ocsf.client.AbstractClient;
 
 import common.ChatIF;
-import ocsf.client.AbstractClient;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
@@ -28,7 +32,7 @@ public class ChatClient extends AbstractClient {
 	 * method in the client.
 	 */
 	ChatIF clientUI;
-	String id;
+	String id;String Password;
 	ArrayList<String> blockList = new ArrayList<String>();
 	String [] currentUsers;
 
@@ -52,6 +56,7 @@ public class ChatClient extends AbstractClient {
 		try {
 			openConnection();
 			sendToServer("#login " + login);
+			handleCommand("#password");
 		} catch (IOException e) {
 			System.out.println("Cannot open connection.  Awaiting command.");
 		}
@@ -70,6 +75,7 @@ public class ChatClient extends AbstractClient {
 			currentUsers=(String[]) msg;
 		} else {
 			String message = msg.toString();
+			
 			if (message.contains(">")) {
 				if (!blockList.contains(message.substring(0, message.indexOf('>')))) {
 					if (blockList.contains("server")) {
@@ -79,9 +85,13 @@ public class ChatClient extends AbstractClient {
 					} else
 						clientUI.display(message);
 				}
-			} else if (!message.equals("#logoff")) {
-				clientUI.display(message);
 			}
+			else if(message.startsWith("#password"))
+			{
+				Password=message.substring(message.indexOf(" ")+1,message.length());
+			}
+			else
+				clientUI.display(message);
 		}
 	}
 
@@ -98,7 +108,9 @@ public class ChatClient extends AbstractClient {
 					handleCommand(message);
 					String[] blockArray = blockList.toArray(new String[blockList.size()]);
 					if (!message.equals("#logoff"))
+					{
 						sendToServer(blockArray);
+					}
 				} else {
 					sendToServer(message);
 				}
@@ -186,6 +198,7 @@ public class ChatClient extends AbstractClient {
 				} else {
 					openConnection();
 					sendToServer("#login " + id);
+					handleCommand("#password");
 				}
 				break;
 			case "gethost":
@@ -233,6 +246,19 @@ public class ChatClient extends AbstractClient {
 				break;
 			case "whoblocksme":
 				sendToServer("#whoblocksme");
+				break;
+			case "password":
+				Scanner sc=new Scanner(System.in);
+				System.out.print("Password: ");
+				String temp=sc.nextLine();
+				if(!temp.equals(Password))
+				{
+					System.out.println("ERROR - invalid logn information");
+					handleCommand("#password");
+				}
+				else{
+					sendToServer("#passwordSuccess");
+				}
 				break;
 			default:
 				clientUI.display("ERROR - invalid command");

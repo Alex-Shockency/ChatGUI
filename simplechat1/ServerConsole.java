@@ -13,10 +13,11 @@ public class ServerConsole implements ChatIF {
 		
 	}
 
-	public ServerConsole(String host,File file, int port) {
+	public ServerConsole(File file,String host, int port) {
 		try {
-			server = new EchoServer(file,port);
+			server = new EchoServer(port);
 			server.listen();
+			server.readvalidUsers(file);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR - Could not listen for clients!");
@@ -110,13 +111,13 @@ public class ServerConsole implements ChatIF {
 
 	public static void main(String[] args) {
 		String host = "";
-		File file=null;
 		int port = 0; // The port number
+		File file=null;
 		if (args.length == 3) {
 			try {
-				file =new File(args[0]);
-				host = args[2];
-				port = Integer.parseInt(args[1]); // Get port from command line
+				file=new File(args[0]);
+				host = args[1];
+				port = Integer.parseInt(args[2]); // Get port from command line
 			} catch (Throwable t) {
 				host = args[1];
 				port = DEFAULT_PORT; // Set port to 5555
@@ -134,14 +135,14 @@ public class ServerConsole implements ChatIF {
 			try{
 				file=new File(args[0]);
 			}
-			catch(Exception e){
-				System.out.println("Error - No validUsers file specified.");
-				System.exit(1);
+			catch(Exception e)
+			{
+				System.out.println("ERROR - No validUsers file specified.");
 			}
 			host = "localhost";
 			port = DEFAULT_PORT; // Set port to 5555
 		}
-		ServerConsole serverchat = new ServerConsole(host,file, port);
+		ServerConsole serverchat = new ServerConsole(file,host, port);
 		serverchat.accept(); // Wait for console data
 	}
 }// end class
