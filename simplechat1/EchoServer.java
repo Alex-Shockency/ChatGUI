@@ -3,11 +3,9 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -33,10 +31,9 @@ public class EchoServer extends AbstractServer {
 	 * The default port to listen on.
 	 */
 	final public static int DEFAULT_PORT = 5555;
-	HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
-	HashMap<String, String> userPasswords = new HashMap<String, String>();
-	ArrayList<String> whoblocksMe = new ArrayList<String>();
-	ArrayList<String> currentUsers = new ArrayList<String>();
+	private HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
+	private HashMap<String, String> userPasswords = new HashMap<String, String>();
+	private ArrayList<String> currentUsers = new ArrayList<String>();
 
 	// Constructors ****************************************************
 
@@ -81,7 +78,8 @@ public class EchoServer extends AbstractServer {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				} else if (tempMsg.trim().equals("#passwordSuccess")) {
+				} else if (tempMsg.startsWith("#passwordSuccess")) {
+					userPasswords.put((String) client.getInfo("Login Id"), tempMsg.substring(tempMsg.indexOf(" ")+1, tempMsg.length()));
 					this.sendToAllClients(client.getInfo("Login Id") + " has logged on.");
 				} else if (tempMsg.trim().equals("#whoblocksme")) {
 					whoblocksMe(client);
@@ -117,7 +115,6 @@ public class EchoServer extends AbstractServer {
 
 	@Override
 	synchronized protected void clientDisconnected(ConnectionToClient client) {
-		currentUsers.remove((String) client.getInfo("Login Id"));
 		System.out.println(client.getInfo("Login Id") + " has disconnected.");
 	}
 
@@ -141,7 +138,10 @@ public class EchoServer extends AbstractServer {
 				client.setInfo("Status", "online");
 				client.setInfo("Login Id", message.substring(7, message.length()));
 				passwordCheck(client);
+				if(!currentUsers.contains(client.getInfo("Login Id")))
+				{
 				currentUsers.add((String) client.getInfo("Login Id"));
+				}
 				String[] tempArray = new String[currentUsers.size()];
 				tempArray = currentUsers.toArray(tempArray);
 				this.sendToAllClients((tempArray));
@@ -162,7 +162,7 @@ public class EchoServer extends AbstractServer {
 	}
 
 	private void whoblocksMe(ConnectionToClient client) {
-		whoblocksMe.clear();
+		ArrayList<String> whoblocksMe = new ArrayList<String>();
 		for (Entry<String, String[]> entry : blockLists.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
@@ -194,8 +194,10 @@ public class EchoServer extends AbstractServer {
 			}
 		}
 	}
-
+	
 	private void passwordCheck(ConnectionToClient client) {
+		if(currentUsers.contains(client.getInfo("Login Id")))
+		{
 		for (Entry<String, String> entry : userPasswords.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
@@ -207,7 +209,16 @@ public class EchoServer extends AbstractServer {
 					e1.printStackTrace();
 				}
 			}
-
+		}
+		}
+		else {
+			try {
+				client.sendToClient("Error - User is not valid please set password.");
+				client.sendToClient("#password " + "");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -219,7 +230,7 @@ public class EchoServer extends AbstractServer {
 				line = reader.nextLine();
 				String[] arrayLine = line.split(",");
 				userPasswords.put(arrayLine[0], arrayLine[1]);
-				currentUsers.add(line);
+				currentUsers.add(arrayLine[0]);
 			}
 			reader.close();
 		} catch (FileNotFoundException e) {
