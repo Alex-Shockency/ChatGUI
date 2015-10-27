@@ -18,6 +18,7 @@ public class ServerConsole implements ChatIF {
 			server = new EchoServer(port);
 			server.listen();
 			server.readvalidUsers(file);
+			server.validUsers.add("server");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR - Could not listen for clients!");
@@ -106,6 +107,8 @@ public class ServerConsole implements ChatIF {
 		case "#getport":
 			System.out.println("Current port: " + server.getPort());
 			break;
+		default:
+			System.out.println("ERROR - invalid command");
 		}
 	}// end handleServerCommand(String message,int port)
 
