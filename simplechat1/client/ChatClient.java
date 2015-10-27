@@ -4,13 +4,13 @@
 
 package client;
 
-import java.io.IOException;
+import ocsf.client.*;
+import common.*;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-
-import common.ChatIF;
-import ocsf.client.AbstractClient;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
@@ -29,12 +29,11 @@ public class ChatClient extends AbstractClient {
 	 * method in the client.
 	 */
 	ChatIF clientUI;
-	private String id;
-	private String Password=null;
 	private ArrayList<String> blockList = new ArrayList<String>();
-	private String[] currentUsers;
-	private boolean ispasswordSet = false;
-
+	private String[] validUsers;
+	private String id="";
+	private String password="";
+	
 	// Constructors ****************************************************
 
 	/**
@@ -48,14 +47,15 @@ public class ChatClient extends AbstractClient {
 	 *            The interface type variable.
 	 */
 
-	public ChatClient(String login, String host, int port, ChatIF clientUI) throws IOException {
+	public ChatClient(String login, String host, int port, ChatIF clientUI)
+			throws IOException {
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
 		id = login;
 		try {
 			openConnection();
 			sendToServer("#login " + login);
-			handleCommand("#enterpassword");
+			passwordCheck();
 		} catch (IOException e) {
 			System.out.println("Cannot open connection.  Awaiting command.");
 		}
@@ -71,22 +71,25 @@ public class ChatClient extends AbstractClient {
 	 */
 	public void handleMessageFromServer(Object msg) {
 		if (msg instanceof String[]) {
-			currentUsers = (String[]) msg;
+			validUsers = (String[]) msg;
 		} else {
 			String message = msg.toString();
 			if (message.contains(">")) {
-				if (!blockList.contains(message.substring(0, message.indexOf('>')))) {
+				if (!blockList.contains(message.substring(0,
+						message.indexOf('>')))) {
 					if (blockList.contains("server")) {
-						if (!message.substring(0, message.indexOf('>')).equals("SERVER MSG")) {
+						if (!message.substring(0, message.indexOf('>')).equals(
+								"SERVER MSG")) {
 							clientUI.display(message);
 						}
 					} else
 						clientUI.display(message);
 				}
 			} else if (message.startsWith("#password")) {
-				Password = message.substring(message.indexOf(" ") + 1, message.length());
+				password = message.substring(message.indexOf(" ") + 1,
+						message.length());
 			}
-			 else
+			else
 				clientUI.display(message);
 		}
 	}
@@ -102,10 +105,6 @@ public class ChatClient extends AbstractClient {
 			if (message.length() != 0) {
 				if (message.charAt(0) == '#') {
 					handleCommand(message);
-					String[] blockArray = blockList.toArray(new String[blockList.size()]);
-					if (!message.equals("#logoff")) {
-						sendToServer(blockArray);
-					}
 				} else {
 					sendToServer(message);
 				}
@@ -116,33 +115,6 @@ public class ChatClient extends AbstractClient {
 		}
 	}
 
-	/**
-	 * This method terminates the client.
-	 */
-	public void quit() {
-		try {
-			closeConnection();
-		} catch (IOException e) {
-		}
-		System.exit(0);
-	}
-
-	@Override
-	protected void connectionClosed() {
-		System.out.println("Client's connection has been closed.");
-	}
-
-	@Override
-	protected void connectionException(Exception exception) {
-		System.out.println("Abnormal termination of connection.");
-	}
-
-	/**
-	 * performs action based on command returns -1 for invalid command
-	 * 
-	 * @param command
-	 * @return
-	 */
 	private void handleCommand(String command) throws IOException {
 		// parse string
 		// check #
@@ -158,10 +130,10 @@ public class ChatClient extends AbstractClient {
 			String commandType = command.substring(1, endOfCommand);
 			switch (commandType) {
 			case "quit":
-				System.exit(1);
+				quit();
 				break;
 			case "logoff":
-				sendToServer("#logoff");
+				sendToServer(command);
 				closeConnection();
 				break;
 			case "sethost":
@@ -193,7 +165,6 @@ public class ChatClient extends AbstractClient {
 				} else {
 					openConnection();
 					sendToServer("#login " + id);
-					handleCommand("#enterpassword");
 				}
 				break;
 			case "gethost":
@@ -208,76 +179,117 @@ public class ChatClient extends AbstractClient {
 					if (!blockList.contains(name)) {
 						if (name.equals(id)) {
 							clientUI.display("You cannot block the sending of messages to yourself.");
-						} else if (!Arrays.asList(currentUsers).contains(name)) {
-							clientUI.display("User " + name + " does not exist.");
+						} else if (!Arrays.asList(validUsers).contains(name)) {
+							clientUI.display("User " + name
+									+ " does not exist.");
 						} else
-							blockList.add(name);
+							clientUI.display("Messages to " + name
+									+ " are now being blocked.");
+						blockList.add(name);
 					} else {
-						clientUI.display("Messages from " + name + " are already blocked");
+						clientUI.display("Messages from " + name
+								+ " are already blocked");
 					}
+					String[] blockArray = blockList
+							.toArray(new String[blockList.size()]);
+					sendToServer(blockArray);
 				}
 				break;
 			case "unblock":
 				if (!argument.isEmpty()) {
 					String name = argument;
 					if (blockList.contains(name)) {
+						clientUI.display("Messages to " + name
+								+ " are now unblocked.");
 						blockList.remove(name);
 					}
 				} else {
+					clientUI.display("All users have been unblocked.");
 					blockList.clear();
 				}
+				String[] blockArray = blockList.toArray(new String[blockList
+						.size()]);
+				sendToServer(blockArray);
 				break;
 			case "whoiblock":
 				if (blockList.size() == 0) {
 					clientUI.display("No blocking is in effect.");
 				} else {
 					for (int i = 0; i < blockList.size(); i++) {
-						clientUI.display("Messages from " + blockList.get(i) + " are blocked");
+						clientUI.display("Messages from " + blockList.get(i)
+								+ " are blocked");
 					}
 				}
 				break;
 			case "whoblocksme":
-				sendToServer("#whoblocksme");
+				sendToServer(command);
 				break;
-			case "enterpassword":
-				Scanner sc = new Scanner(System.in);
-				if(ispasswordSet)
-				{
-					clientUI.display("ERROR - Password has already been set.");
-					break;
-				}
-				if (Password.isEmpty()) {
-					handleCommand("#setpassword");
-					sendToServer("#passwordSuccess "+Password);
-					ispasswordSet = true;
-					break;
-				} 
-				System.out.println("Login: " + id);
-				System.out.print("Password: ");
-				String temp = sc.nextLine();
-				if (!temp.equals(Password)) {
-					clientUI.display("ERROR - invalid logn information");
-					handleCommand("#enterpassword");
-				} else {
-					sendToServer("#passwordSuccess "+Password);
-					ispasswordSet = true;
-				}
-				break;
-			case "setpassword":
-				if(ispasswordSet)
-				{
-					clientUI.display("ERROR - Password has already been set.");
-					break;
-				}
-				Scanner sc2 = new Scanner(System.in);
-				System.out.print("Set Password: ");
-				Password = sc2.nextLine();
-				clientUI.display("Password set to: " + Password);
-				ispasswordSet = true;
+			case "pm":
+				sendToServer(command);
 				break;
 			default:
 				clientUI.display("ERROR - invalid command");
 			}
 		}
 	}
-}// End of ChatClient class
+
+	@SuppressWarnings("resource")
+	private boolean passwordCheck() {
+		Scanner sc = new Scanner(System.in);
+		if(password.isEmpty())
+		{
+			setPassword();
+		}
+		System.out.println("Login: " + id);
+		System.out.print("Password: ");
+		String temp = sc.nextLine();
+		if (temp.equals(password)) {
+			try {
+				sendToServer(true);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return true;
+		} else{
+			System.out.println("ERROR - Invalid login information try again.");
+			passwordCheck();
+			return false;
+		}
+	}
+	@SuppressWarnings("resource")
+	private void setPassword() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Set Password: ");
+		password = sc.nextLine();
+		clientUI.display("Password set to: " + password);
+		try {
+			sendToServer("#setPassword "+password);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * This method terminates the client.
+	 */
+	public void quit() {
+		try {
+			closeConnection();
+		} catch (IOException e) {
+		}
+		System.exit(0);
+	}
+
+	@Override
+	protected void connectionClosed() {
+		System.out.println("Client's connection has been closed.");
+	}
+
+	@Override
+	protected void connectionException(Exception exception) {
+		System.out.println("Abnormal termination of connection.");
+	}
+}
+// End of ChatClient class
