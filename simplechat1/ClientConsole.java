@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import client.ChatClient;
-
 import common.ChatIF;
 
 /**
@@ -73,7 +72,6 @@ public class ClientConsole implements ChatIF
       BufferedReader fromConsole = 
         new BufferedReader(new InputStreamReader(System.in));
       String message;
-
       while (true) 
       {
         message = fromConsole.readLine();
