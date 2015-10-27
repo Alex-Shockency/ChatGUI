@@ -31,9 +31,9 @@ public class ChatClient extends AbstractClient {
 	ChatIF clientUI;
 	private ArrayList<String> blockList = new ArrayList<String>();
 	private String[] validUsers;
-	private String id="";
-	private String password="";
-	
+	private String id = "";
+	private String password = "";
+
 	// Constructors ****************************************************
 
 	/**
@@ -88,8 +88,7 @@ public class ChatClient extends AbstractClient {
 			} else if (message.startsWith("#password")) {
 				password = message.substring(message.indexOf(" ") + 1,
 						message.length());
-			}
-			else
+			} else
 				clientUI.display(message);
 		}
 	}
@@ -230,6 +229,15 @@ public class ChatClient extends AbstractClient {
 			case "pm":
 				sendToServer(command);
 				break;
+			case "status":
+				sendToServer(command);
+				break;
+			case "notavailable":
+				sendToServer(command);
+				break;
+			case "available":
+				sendToServer(command);
+				break;
 			default:
 				clientUI.display("ERROR - invalid command");
 			}
@@ -239,8 +247,7 @@ public class ChatClient extends AbstractClient {
 	@SuppressWarnings("resource")
 	private boolean passwordCheck() {
 		Scanner sc = new Scanner(System.in);
-		if(password.isEmpty())
-		{
+		if (password.isEmpty()) {
 			setPassword();
 		}
 		System.out.println("Login: " + id);
@@ -254,12 +261,13 @@ public class ChatClient extends AbstractClient {
 				e.printStackTrace();
 			}
 			return true;
-		} else{
+		} else {
 			System.out.println("ERROR - Invalid login information try again.");
 			passwordCheck();
 			return false;
 		}
 	}
+
 	@SuppressWarnings("resource")
 	private void setPassword() {
 		Scanner sc = new Scanner(System.in);
@@ -267,7 +275,7 @@ public class ChatClient extends AbstractClient {
 		password = sc.nextLine();
 		clientUI.display("Password set to: " + password);
 		try {
-			sendToServer("#setPassword "+password);
+			sendToServer("#setPassword " + password);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

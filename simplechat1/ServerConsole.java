@@ -8,12 +8,13 @@ import common.ChatIF;
 public class ServerConsole implements ChatIF {
 	final public static int DEFAULT_PORT = 5555;
 	EchoServer server;
+
 	@Override
 	public void display(String message) {
-		
+
 	}
 
-	public ServerConsole(File file,String host, int port) {
+	public ServerConsole(File file, String host, int port) {
 		try {
 			server = new EchoServer(port);
 			server.listen();
@@ -38,8 +39,8 @@ public class ServerConsole implements ChatIF {
 			while (true) {
 				message = fromConsole.readLine();
 				handleServerCommand(message, port);
-				System.out.println("SERVER MSG"+"> "+message);
-				server.sendToAllClients("SERVER MSG"+"> "+message);
+				System.out.println("SERVER MSG" + "> " + message);
+				server.sendToAllClients("SERVER MSG" + "> " + message);
 			}// end while(true)
 		} catch (Exception ex) {
 			System.out.println("Unexpected error while reading from console!");
@@ -107,18 +108,16 @@ public class ServerConsole implements ChatIF {
 		case "#getport":
 			System.out.println("Current port: " + server.getPort());
 			break;
-		default:
-			System.out.println("ERROR - invalid command");
 		}
 	}// end handleServerCommand(String message,int port)
 
 	public static void main(String[] args) {
 		String host = "";
 		int port = 0; // The port number
-		File file=null;
+		File file = null;
 		if (args.length == 3) {
 			try {
-				file=new File(args[0]);
+				file = new File(args[0]);
 				host = args[1];
 				port = Integer.parseInt(args[2]); // Get port from command line
 			} catch (Throwable t) {
@@ -128,24 +127,22 @@ public class ServerConsole implements ChatIF {
 		}
 		if (args.length == 2) {
 			try {
-				file=new File(args[0]);
+				file = new File(args[0]);
 				port = Integer.parseInt(args[1]); // Get port from command line
 			} catch (Throwable t) {
 				host = args[1];
 				port = DEFAULT_PORT; // Set port to 5555
 			}
 		} else {
-			try{
-				file=new File(args[0]);
-			}
-			catch(Exception e)
-			{
+			try {
+				file = new File(args[0]);
+			} catch (Exception e) {
 				System.out.println("ERROR - No validUsers file specified.");
 			}
 			host = "localhost";
 			port = DEFAULT_PORT; // Set port to 5555
 		}
-		ServerConsole serverchat = new ServerConsole(file,host, port);
+		ServerConsole serverchat = new ServerConsole(file, host, port);
 		serverchat.accept(); // Wait for console data
 	}
 }// end class
