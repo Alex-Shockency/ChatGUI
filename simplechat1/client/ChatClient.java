@@ -234,6 +234,14 @@ public class ChatClient extends AbstractClient {
 			case "whoblocksme":
 				sendToServer("#whoblocksme");
 				break;
+				
+			case "status":
+				
+				if (argument.length() != 0) {
+					System.out.println("STATUS ON: '" + argument + "'");
+					sendToServer("#status " + argument);
+				}
+				break;
 			default:
 				clientUI.display("ERROR - invalid command");
 			}

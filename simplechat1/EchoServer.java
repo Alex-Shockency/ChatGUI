@@ -73,6 +73,10 @@ public class EchoServer extends AbstractServer {
 				this.sendToAllClients(client.getInfo("Login Id") + " has logged on.");
 			}
 			if (msgCount != 0) {
+				String isStatusCheck = "";
+				if(tempMsg.length() >= 6){
+					isStatusCheck = tempMsg.substring(0,7).trim();
+				}
 				if (tempMsg.trim().equals("#logoff")) {
 					try {
 						client.close();
@@ -81,6 +85,9 @@ public class EchoServer extends AbstractServer {
 					}
 				} else if (tempMsg.trim().equals("#whoblocksme")) {
 					whoblocksMe(client);
+				} else if (isStatusCheck.equals("#status")){
+					System.out.println("#status called");
+					status(tempMsg, client);
 				}
 				else {
 					if (client.getInfo("Login Id").equals("server")) {
@@ -188,6 +195,35 @@ public class EchoServer extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void status(String tempMsg, ConnectionToClient client){
+		
+		System.out.println("status method called");
+		//System.out.println(tempMsg);
+		
+		int endOfCommand = tempMsg.length();
+		String argument = "";
+		if (tempMsg.contains(" ")) {
+			endOfCommand = tempMsg.indexOf(' ');
+			argument = tempMsg.substring(tempMsg.indexOf(' ') + 1);
+		}
+		
+		if(currentUsers.indexOf(argument) == -1){
+			try {
+				client.sendToClient("User "+argument+" does not exist.");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+			
+			
+			//get actual status on user in argument
+			
+		}
+		
+		
 	}
 
 	/**
