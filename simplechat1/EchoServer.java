@@ -32,7 +32,7 @@ public class EchoServer extends AbstractServer {
 	final public static int DEFAULT_PORT = 5555;
 	private HashMap<String, String> userPasswords = new HashMap<String, String>();
 	private HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
-	private ArrayList<String> validUsers = new ArrayList<String>();
+	ArrayList<String> validUsers = new ArrayList<String>();
 
 	// Constructors ****************************************************
 
@@ -226,16 +226,16 @@ public class EchoServer extends AbstractServer {
 			}
 			break;
 		case "pm":
-			if (argument.length() == 0||argument.substring(argument.indexOf(' ')).length()==0) {
+			if (argument.length() == 0||!argument.contains(" ")) {
 				try {
-					client.sendToClient("ERROR - usage: <User> <message>");
+					client.sendToClient("ERROR - usage:#pm <User> <message>");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 			else{
-			String clientToPm=argument.substring(0,argument.indexOf(' '));
+			String clientToPm=argument.substring(0,argument.indexOf(" "));
 			String privateMessage=argument.substring(argument.indexOf(' ')+1);
 			privateMessage(client,clientToPm,privateMessage);
 			}

@@ -165,6 +165,7 @@ public class ChatClient extends AbstractClient {
 				} else {
 					openConnection();
 					sendToServer("#login " + id);
+					passwordCheck();
 				}
 				break;
 			case "gethost":
@@ -182,6 +183,7 @@ public class ChatClient extends AbstractClient {
 						} else if (!Arrays.asList(validUsers).contains(name)) {
 							clientUI.display("User " + name
 									+ " does not exist.");
+							break;
 						} else
 							clientUI.display("Messages to " + name
 									+ " are now being blocked.");
@@ -189,6 +191,7 @@ public class ChatClient extends AbstractClient {
 					} else {
 						clientUI.display("Messages from " + name
 								+ " are already blocked");
+						break;
 					}
 					String[] blockArray = blockList
 							.toArray(new String[blockList.size()]);
