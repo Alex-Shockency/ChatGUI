@@ -242,8 +242,10 @@ public class ChatClient extends AbstractClient {
 				if (argument.length() == 0) {
 					clientUI.display("ERROR - no argument provided");
 				} else
+				{
 					clientUI.display("Channel created: " + argument);
 					sendToServer(command);
+				}
 				break;
 			case "connectToChannel":
 				if (argument.length() == 0) {
