@@ -243,15 +243,20 @@ public class ChatClient extends AbstractClient {
 					clientUI.display("ERROR - no argument provided");
 				} else
 				{
-					clientUI.display("Channel created: " + argument);
 					sendToServer(command);
 				}
 				break;
-			case "connectToChannel":
+			case "joinChannel":
 				if (argument.length() == 0) {
 					clientUI.display("ERROR - no argument provided");
 				} else
 					sendToServer(command);
+				break;
+			case "leaveChannel":
+				sendToServer(command);
+				break;
+			case "channelStatus":
+				sendToServer(command);
 				break;
 			default:
 				clientUI.display("ERROR - invalid command");
