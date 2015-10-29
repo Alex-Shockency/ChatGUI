@@ -241,8 +241,7 @@ public class ChatClient extends AbstractClient {
 			case "createChannel":
 				if (argument.length() == 0) {
 					clientUI.display("ERROR - no argument provided");
-				} else
-				{
+				} else {
 					sendToServer(command);
 				}
 				break;
@@ -257,6 +256,15 @@ public class ChatClient extends AbstractClient {
 				break;
 			case "channelStatus":
 				sendToServer(command);
+				break;
+			case "monitor":
+				if (argument.length() == 0) {
+					clientUI.display("ERROR - no argument provided");
+				} else if (argument.equals(this.id)) {
+					System.out.println("ERROR - you can not monitor yourself.");
+				} else {
+					sendToServer(command);
+				}
 				break;
 			default:
 				clientUI.display("ERROR - invalid command");
@@ -291,6 +299,7 @@ public class ChatClient extends AbstractClient {
 	@SuppressWarnings("resource")
 	private void setPassword() {
 		Scanner sc = new Scanner(System.in);
+		System.out.println("Login: " + id);
 		System.out.print("Set Password: ");
 		password = sc.nextLine();
 		clientUI.display("Password set to: " + password);
