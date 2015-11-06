@@ -32,7 +32,7 @@ public class EchoServer extends AbstractServer {
 	 */
 	final public static int DEFAULT_PORT = 5555;
 	private HashMap<String, String> userPasswords = new HashMap<String, String>();
-	private HashMap<String, String[]> blockLists = new HashMap<String, String[]>();
+	private HashMap<String, ArrayList<String>> blockLists = new HashMap<String, ArrayList<String>>();
 	private HashMap<String, ArrayList<String>> serverChannels = new HashMap<String, ArrayList<String>>();
 	ArrayList<String> validUsers = new ArrayList<String>();
 
@@ -65,18 +65,14 @@ public class EchoServer extends AbstractServer {
 		if (!client.getInfo("status").equals("Unavailable")) {
 			client.setInfo("status", "Online");
 		}
-		if (msg instanceof String[]) {
-			String[] tempArray = ((String[]) msg);
-			blockLists.put((String) client.getInfo("Login Id"), tempArray);
-		} else {
 			if (msg.equals(true)) {
 				serverChannels.get("public").add(
-						(String) client.getInfo("Login Id"));
+						(String) client.getInfo("loginId"));
 				client.setInfo("status", "Online");
-				client.setInfo("Current Channel", "public");
-				System.out.println(client.getInfo("Login Id")
+				client.setInfo("currentChannel", "public");
+				System.out.println(client.getInfo("loginId")
 						+ " has logged on.");
-				sendToAllClients(client, client.getInfo("Login Id")
+				sendToAllClients(client, client.getInfo("loginId")
 						+ " has logged on.");
 				return;
 			}
@@ -89,13 +85,13 @@ public class EchoServer extends AbstractServer {
 				handleClientCommand(client, tempMsg);
 			} else {
 				System.out.println("Message received: " + msg.toString()
-						+ " from " + client.getInfo("Login Id") + " " + client);
-				sendToAllClients(client, client.getInfo("Login Id") + "> "
+						+ " from " + client.getInfo("loginId") + " " + client);
+				sendToAllClients(client, client.getInfo("loginId") + "> "
 						+ tempMsg);
 			}// end else
 			client.setInfo("Message Count", msgCount + 1);
 		}
-	}
+//	}
 
 	/**
 	 * This method overrides the one in the superclass. Called when the server
@@ -118,64 +114,41 @@ public class EchoServer extends AbstractServer {
 	protected void clientConnected(ConnectionToClient client) {
 		client.setInfo("Message Count", 0);
 		client.setInfo("status", "Unavailable");
-		client.setInfo("Who I monitor", "");
+		client.setInfo("whoimonitor", "");
 		System.out
 				.println("A new client is attempting to connect to the server.");
 	}
 
 	@Override
 	synchronized protected void clientDisconnected(ConnectionToClient client) {
-		System.out.println(client.getInfo("Login Id") + " has disconnected.");
+		System.out.println(client.getInfo("loginId") + " has disconnected.");
 	}
 
 	// Class methods ***************************************************
 	private void sendToAllClients(ConnectionToClient client, String message) {
 		for (Thread currentUserThread : getClientConnections()) {
-			if (client.getInfo("Login Id").equals(
-					((ConnectionToClient) currentUserThread)
-							.getInfo("Login Id"))) {
-				sendToClient((ConnectionToClient) currentUserThread, message);
-			} else {
-				if (!((ConnectionToClient) currentUserThread).getInfo("status")
-						.equals("Unavailable")) {
-
-					if (client.getInfo("Current Channel").equals(
-							((ConnectionToClient) currentUserThread)
-									.getInfo("Current Channel"))) {
-
-						sendToClient((ConnectionToClient) currentUserThread,
-								message);
+			//client info for current thread
+			ConnectionToClient currentClient=((ConnectionToClient) currentUserThread);
+			if (!currentClient.getInfo("status").equals("Unavailable")&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))) {
+				if (client.getInfo("currentChannel").equals(currentClient.getInfo("currentChannel"))) {
+						sendToClient((ConnectionToClient) currentUserThread,message);
 					}
 				}
 			}
 		}
-	}
 
 	private void sendToClient(ConnectionToClient client, String message) {
 		try {
 			for (Thread currentUserThread : getClientConnections()) {
-				if (!((ConnectionToClient) currentUserThread).getInfo(
-						"Who I monitor").equals("")) {
-					if (((ConnectionToClient) currentUserThread).getInfo(
-							"Who I monitor").equals(client.getInfo("Login Id"))) {
-						if (!blockLists.isEmpty()) {
-							if (!Arrays
-									.asList(blockLists.get(client
-											.getInfo("Login Id")))
-									.contains(
-											((ConnectionToClient) currentUserThread)
-													.getInfo("Login Id"))) {
-								((ConnectionToClient) currentUserThread)
-										.sendToClient(message
-												+ " (monitored from "
-												+ client.getInfo("Login Id")
-												+ ")");
+				//client info for current thread
+				ConnectionToClient currentClient=((ConnectionToClient) currentUserThread);
+				if (!currentClient.getInfo("whoimonitor").equals("")) {
+					if (currentClient.getInfo("whoimonitor").equals(client.getInfo("loginId"))) {
+						if (!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))) {
+								currentClient.sendToClient("(monitored from "+ client.getInfo("loginId")+ ") "+ message );
 							}
-						} else
-							((ConnectionToClient) currentUserThread)
-									.sendToClient(message + " (monitored from "
-											+ client.getInfo("Login Id") + ")");
-
+						 else
+							currentClient.sendToClient("(monitored from "+ client.getInfo("loginId")+ ") "+ message );
 					}// end if
 				}// end if
 			}// end for
@@ -189,20 +162,19 @@ public class EchoServer extends AbstractServer {
 	private void loginId(int msgCount, String message, ConnectionToClient client) {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
-				client.setInfo("Login Id",
-						message.substring(7, message.length()));
+				client.setInfo("loginId",message.substring(7, message.length()));
+				//Initialize blockList of client to empty list.
+				ArrayList<String> tempList=new ArrayList<String>();
+				blockLists.put((String) client.getInfo("loginId"),tempList);
 				passwordCheck(client);
-				if (!validUsers.contains(client.getInfo("Login Id"))) {
-					validUsers.add((String) client.getInfo("Login Id"));
+				if (!validUsers.contains(client.getInfo("loginId"))) {
+					validUsers.add((String) client.getInfo("loginId"));
 				}
-				String[] tempArray = new String[validUsers.size()];
-				tempArray = validUsers.toArray(tempArray);
-				this.sendToAllClients((tempArray));
 			}
 
 		} else if (msgCount == 0 && !message.startsWith("#login")) {
 			try {
-				client.sendToClient("ERROR - No login ID specified.  Connection aborted.");
+				client.sendToClient("ERROR - No loginId specified.  Connection aborted.");
 				client.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -211,39 +183,36 @@ public class EchoServer extends AbstractServer {
 	}
 
 	private void passwordCheck(ConnectionToClient client) {
-		if (validUsers.contains(client.getInfo("Login Id"))) {
+		if (validUsers.contains(client.getInfo("loginId"))) {
 			for (Entry<String, String> entry : userPasswords.entrySet()) {
 				String key = entry.getKey();
 				Object value = entry.getValue();
-				if (key.equals(client.getInfo("Login Id"))) {
+				if (key.equals(client.getInfo("loginId"))) {
 					sendToClient(client, "#password " + value);
 				}
 			}
 		} else {
-			sendToClient(client,
-					"Error - User is not valid please set password.");
+			sendToClient(client, "Error - User is not valid please set password.");
 		}
 	}
 
-	private void privateMessage(ConnectionToClient client, String clientToPM,
-			String message) {
+	private void privateMessage(ConnectionToClient client, String clientToPM, String message) {
 		for (Thread currentUserThread : getClientConnections()) {
-			Object tempLogin = ((ConnectionToClient) currentUserThread)
-					.getInfo("Login Id");
-			if (tempLogin.equals(clientToPM)) {
-				if (clientToPM.equals(client.getInfo("Login Id"))) {
-					sendToClient(client,
-							"ERROR - You cannot private message yourself.");
-				} else if (!((ConnectionToClient) currentUserThread).getInfo(
-						"status").equals("Unavailable")) {
-					sendToClient(((ConnectionToClient) currentUserThread),
-							client.getInfo("Login Id") + "> "
-									+ "(PRIVATE MSG) " + message);
-				} else
-					sendToClient(client, "ERROR - " + tempLogin
-							+ " is not available.");
+			//client info for current thread
+			ConnectionToClient currentClient = ((ConnectionToClient) currentUserThread);
+			
+			if (currentClient.getInfo("loginId").equals(clientToPM)) {
+				if(!currentClient.getInfo("status").equals("Unavailable")&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))){
+					if (clientToPM.equals(client.getInfo("loginId"))) {
+					sendToClient(client,"ERROR - You cannot private message yourself.");
+					} else if (!((ConnectionToClient) currentUserThread).getInfo("status").equals("Unavailable")) {
+					sendToClient(currentClient, "(PRIVATE MSG) "+client.getInfo("loginId") + "> " + message);
+					} else
+					sendToClient(client, "ERROR - " + currentClient.getInfo("loginId") + " is not available.");
+				}
 			}
 		}
+			
 	}
 
 	private void status(String user, ConnectionToClient client) {
@@ -258,8 +227,7 @@ public class EchoServer extends AbstractServer {
 			// not logged in
 
 			for (Thread currentUserThread : getClientConnections()) {
-				Object tempLogin = ((ConnectionToClient) currentUserThread)
-						.getInfo("Login Id");
+				Object tempLogin = ((ConnectionToClient) currentUserThread).getInfo("loginId");
 				if (tempLogin.equals(user)) {
 					try {
 
@@ -267,7 +235,7 @@ public class EchoServer extends AbstractServer {
 								"status").equals("Unavailable")) {
 							client.sendToClient("User "
 									+ ((ConnectionToClient) currentUserThread)
-											.getInfo("Login Id")
+											.getInfo("loginId")
 									+ " is "
 									+ ((ConnectionToClient) currentUserThread)
 											.getInfo("status"));
@@ -287,7 +255,7 @@ public class EchoServer extends AbstractServer {
 
 							client.sendToClient("User "
 									+ ((ConnectionToClient) currentUserThread)
-											.getInfo("Login Id")
+											.getInfo("loginId")
 									+ " is "
 									+ ((ConnectionToClient) currentUserThread)
 											.getInfo("status"));
@@ -297,7 +265,7 @@ public class EchoServer extends AbstractServer {
 									"status", "Online");
 							client.sendToClient("User "
 									+ ((ConnectionToClient) currentUserThread)
-											.getInfo("Login Id")
+											.getInfo("loginId")
 									+ " is "
 									+ ((ConnectionToClient) currentUserThread)
 											.getInfo("status"));
@@ -323,23 +291,15 @@ public class EchoServer extends AbstractServer {
 
 	private void channelStatus(String channel, ConnectionToClient client) {
 		if (serverChannels.containsKey(channel)) {
-			if (client.getInfo("Current Channel").equals(channel)
-					|| channel.equals("public")) {
+			if (client.getInfo("currentChannel").equals(channel)|| channel.equals("public")) {
 				for (Thread currentUserThread : getClientConnections()) {
 					ConnectionToClient currentClient = ((ConnectionToClient) currentUserThread);
-					if (channel.equals(((ConnectionToClient) currentUserThread)
-							.getInfo("Current Channel"))) {
-						sendToClient(
-								client,
-								"User " + currentClient.getInfo("Login Id")
-										+ " is "
-										+ currentClient.getInfo("status"));
+					if (channel.equals(currentClient.getInfo("currentChannel"))) {
+						sendToClient(client,"User " + currentClient.getInfo("loginId")+ " is "+ currentClient.getInfo("status"));
 					}
 				}
 			} else {
-				sendToClient(client,
-						"You are not authorized to get information about channel "
-								+ channel + ".");
+				sendToClient(client,"You are not authorized to get information about channel "+ channel + ".");
 			}
 		} else
 			sendToClient(client, "ERROR - Channel does not exist.");
@@ -355,18 +315,43 @@ public class EchoServer extends AbstractServer {
 		}
 		String commandType = command.substring(1, endOfCommand);
 		switch (commandType) {
+		case "block":
+			if(validUsers.contains(argument)){
+				if(!argument.equals(client.getInfo("loginId"))){
+				blockLists.get(client.getInfo("loginId")).add(argument);
+				sendToClient(client,"Messages from "+argument+" are now being blocked.");
+				}
+				else
+					sendToClient(client,"ERROR - You cannot block yourself.");
+			}
+			else
+				sendToClient(client,"ERROR - User does not exist.");
+			break;
+		case "unblock":
+			if(argument.isEmpty())
+			{
+				blockLists.get(client.getInfo("loginId")).clear();
+				sendToClient(client,"All users have been unblocked.");
+			}
+			else
+				blockLists.get(client.getInfo("loginId")).remove(argument);
+				sendToClient(client,argument+" has been unblocked.");
+			break;
+		case "whoiblock":
+			ArrayList <String> clientBlockList=blockLists.get(client.getInfo("loginId"));
+			for(int i=0;i<clientBlockList.size();i++)
+			{
+				sendToClient(client,clientBlockList.get(i));
+			}
+			break;
 		case "whoblocksme":
 			ArrayList<String> whoblocksMe = new ArrayList<String>();
-			for (Entry<String, String[]> entry : blockLists.entrySet()) {
+			for (Entry<String, ArrayList<String>> entry : blockLists.entrySet()) {
 				String key = entry.getKey();
-				Object value = entry.getValue();
-				String[] tempValues = (String[]) value;
-				if (!key.equals(client.getInfo("Login Id"))) {
-					for (int i = 0; i < tempValues.length; i++) {
-						if (tempValues[i].equals(client.getInfo("Login Id"))) {
-							if (!whoblocksMe.contains(key))
-								whoblocksMe.add(key);
-						}
+				ArrayList<String> blockList = entry.getValue();
+				if (!key.equals(client.getInfo("loginId"))) {
+					if(blockList.contains(client.getInfo("loginId"))){
+						whoblocksMe.add(key);
 					}
 				}
 			}
@@ -375,7 +360,7 @@ public class EchoServer extends AbstractServer {
 			} else {
 				for (int i = 0; i < whoblocksMe.size(); i++) {
 					sendToClient(client, "Messages to " + whoblocksMe.get(i)
-							+ " are being blocked");
+							+ " are being blocked.");
 				}
 			}
 			break;
@@ -389,17 +374,15 @@ public class EchoServer extends AbstractServer {
 			}
 			break;
 		case "setPassword":
-			userPasswords.put((String) client.getInfo("Login Id"), argument);
+			userPasswords.put((String) client.getInfo("loginId"), argument);
 			sendToClient(client, "#password " + argument);
 			break;
 		case "pm":
 			if (argument.length() == 0 || !argument.contains(" ")) {
-				sendToClient(client, "ERROR - usage:#pm <User> <message>");
+				sendToClient(client, "ERROR - Usage:#pm <User> <message>");
 			} else {
-				String clientToPm = argument
-						.substring(0, argument.indexOf(" "));
-				String privateMessage = argument.substring(argument
-						.indexOf(' ') + 1);
+				String clientToPm = argument.substring(0, argument.indexOf(" "));
+				String privateMessage = argument.substring(argument.indexOf(' ') + 1);
 				privateMessage(client, clientToPm, privateMessage);
 			}
 			break;
@@ -425,29 +408,20 @@ public class EchoServer extends AbstractServer {
 			if (serverChannels.containsKey(argument)) {
 				sendToClient(client, "ERROR - Channel is already created.");
 			} else {
-				sendToAllClients(client,
-						client.getInfo("Login Id") + " has disconnected from "
-								+ client.getInfo("Current Channel")
-								+ " channel");
+				sendToAllClients(client,client.getInfo("loginId") + " has disconnected from "+ client.getInfo("currentChannel")+ " channel");
+				//Intialize to empty list
 				serverChannels.put(argument, tempUsers);
-				serverChannels.get(argument).add(
-						(String) client.getInfo("Login Id"));
-				serverChannels.get("public").remove(client.getInfo("Login Id"));
-				client.setInfo("Current Channel", argument);
-				sendToClient(client, "Channel " + argument
-						+ " has been created.");
-				sendToAllClients(client, client.getInfo("Login Id")
-						+ " has logged in to " + argument + " channel");
+				serverChannels.get(argument).add((String) client.getInfo("loginId"));
+				serverChannels.get("public").remove(client.getInfo("loginId"));
+				client.setInfo("currentChannel", argument);
+				sendToClient(client, "Channel " + argument + " has been created.");
+				sendToAllClients(client, client.getInfo("loginId")+ " has logged in to " + argument + " channel");
 			}
 			break;
 		case "joinChannel":
 			System.out.println();
 			if (client.getInfo("status").equals("Unavailable")) {
-				sendToClient(
-						client,
-						"ERROR - Cannot join channel, "
-								+ client.getInfo("Login Id")
-								+ " is Unavailable");
+				sendToClient(client,"ERROR - Cannot join channel, "+ client.getInfo("loginId") + " is Unavailable");
 				break;
 			} else {
 				for (Entry<String, ArrayList<String>> entry : serverChannels
@@ -455,21 +429,13 @@ public class EchoServer extends AbstractServer {
 					String key = entry.getKey();
 					if (serverChannels.containsKey(argument)) {
 						if (key.equals(argument)) {
-							if (!serverChannels.get(key).contains(
-									client.getInfo("Login Id"))) {
-								serverChannels.get(key).add(
-										(String) client.getInfo("Login Id"));
-
-								serverChannels.get("public").remove(
-										client.getInfo("Login Id"));
-								client.setInfo("Current Channel", argument);
-								sendToAllClients(client,
-										client.getInfo("Login Id")
-												+ " has logged into "
-												+ argument + " channel");
+							if (!serverChannels.get(key).contains(client.getInfo("loginId"))) {
+								serverChannels.get(key).add((String) client.getInfo("loginId"));
+								serverChannels.get("public").remove(client.getInfo("loginId"));
+								client.setInfo("currentChannel", argument);
+								sendToAllClients(client,client.getInfo("loginId")+ " has logged into "+ argument + " channel");
 							} else
-								sendToClient(client,
-										"ERROR - already connected to channel.");
+								sendToClient(client,"ERROR - already connected to channel.");
 						}
 					} else {
 						sendToClient(client, "ERROR - Channel does not exist.");
@@ -479,21 +445,20 @@ public class EchoServer extends AbstractServer {
 			}
 			break;
 		case "leaveChannel":
-			if (client.getInfo("Current Channel").equals("public")) {
+			if (client.getInfo("currentChannel").equals("public")) {
 				sendToClient(client, "Cannot disconnect from public channel");
 			} else {
 				sendToAllClients(
 						client,
-						client.getInfo("Login Id")
+						client.getInfo("loginId")
 								+ " has disconnected from channel "
-								+ client.getInfo("Current Channel"));
-				client.setInfo("Current Channel", "public");
+								+ client.getInfo("currentChannel"));
+				client.setInfo("currentChannel", "public");
 			}
 			break;
 		case "monitor":
-			client.setInfo("Who I monitor", argument);
+			client.setInfo("whoimonitor", argument);
 			sendToClient(client, "You are now monitoring " + argument + ".");
-
 			break;
 		default:
 
