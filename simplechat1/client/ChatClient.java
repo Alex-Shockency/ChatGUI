@@ -4,13 +4,12 @@
 
 package client;
 
-import ocsf.client.*;
-import common.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Scanner;
+
+import ocsf.client.AbstractClient;
+
+import common.ChatIF;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
