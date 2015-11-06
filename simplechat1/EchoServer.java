@@ -112,7 +112,6 @@ public class EchoServer extends AbstractServer {
 	protected void clientConnected(ConnectionToClient client) {
 		client.setInfo("Message Count", 0);
 		client.setInfo("status", "Unavailable");
-		client.setInfo("whoimonitor", "");
 		System.out.println("A new client is attempting to connect to the server.");
 	}
 
@@ -126,20 +125,20 @@ public class EchoServer extends AbstractServer {
 		for (Thread currentUserThread : getClientConnections()) {
 			//client info for current thread
 			ConnectionToClient currentClient=((ConnectionToClient) currentUserThread);
-			if (!currentClient.getInfo("status").equals("Unavailable")&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))) {
-				if (client.getInfo("currentChannel").equals(currentClient.getInfo("currentChannel"))) {
-						sendToClient((ConnectionToClient) currentUserThread,message);
-					}
-				}
+			if (!currentClient.getInfo("status").equals("Unavailable")
+					&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))
+					&&client.getInfo("currentChannel").equals(currentClient.getInfo("currentChannel"))) {
+					sendToClient((ConnectionToClient) currentUserThread,message);
 			}
 		}
+	}
 
 	private void sendToClient(ConnectionToClient client, String message) {
 		try {
 			for (Thread currentUserThread : getClientConnections()) {
 				//client info for current thread
 				ConnectionToClient currentClient=((ConnectionToClient) currentUserThread);
-				if (!currentClient.getInfo("whoimonitor").equals("")) {
+				if (currentClient.getInfo("whoimonitor") != null) {
 					//if someone is monitoring somebody forward the message from that user.
 					if (currentClient.getInfo("whoimonitor").equals(client.getInfo("loginId"))) {
 						//if they are not blocked then forward.
@@ -197,7 +196,6 @@ public class EchoServer extends AbstractServer {
 		for (Thread currentUserThread : getClientConnections()) {
 			//client info for current thread
 			ConnectionToClient currentClient = ((ConnectionToClient) currentUserThread);
-			
 			if (currentClient.getInfo("loginId").equals(clientToPM)) {
 				if(!currentClient.getInfo("status").equals("Unavailable")&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))){
 					if (clientToPM.equals(client.getInfo("loginId"))) {
