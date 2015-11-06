@@ -4,13 +4,12 @@
 
 package client;
 
-import ocsf.client.*;
-import common.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Scanner;
+
+import ocsf.client.AbstractClient;
+
+import common.ChatIF;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
@@ -157,26 +156,12 @@ public class ChatClient extends AbstractClient {
 				clientUI.display("PORT: " + Integer.toString(getPort()));
 				break;
 			case "block":
-				sendToServer(command);
-				break;
 			case "unblock":
-				sendToServer(command);
-				break;
 			case "whoiblock":
-				sendToServer(command);
-				break;
 			case "whoblocksme":
-				sendToServer(command);
-				break;
 			case "pm":
-				sendToServer(command);
-				break;
 			case "status":
-				sendToServer(command);
-				break;
 			case "notavailable":
-				sendToServer(command);
-				break;
 			case "available":
 				sendToServer(command);
 				break;
@@ -208,8 +193,8 @@ public class ChatClient extends AbstractClient {
 					sendToServer(command);
 				}
 				break;
-			default:
-				clientUI.display("ERROR - invalid command");
+//			default:
+//				clientUI.display("ERROR - invalid command");
 			}
 		}
 	}

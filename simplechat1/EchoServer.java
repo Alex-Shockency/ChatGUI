@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -66,6 +65,7 @@ public class EchoServer extends AbstractServer {
 			client.setInfo("status", "Online");
 		}
 			if (msg.equals(true)) {
+				// if the login is sucessful
 				serverChannels.get("public").add(
 						(String) client.getInfo("loginId"));
 				client.setInfo("status", "Online");
@@ -84,10 +84,8 @@ public class EchoServer extends AbstractServer {
 			} else if (tempMsg.charAt(0) == '#') {
 				handleClientCommand(client, tempMsg);
 			} else {
-				System.out.println("Message received: " + msg.toString()
-						+ " from " + client.getInfo("loginId") + " " + client);
-				sendToAllClients(client, client.getInfo("loginId") + "> "
-						+ tempMsg);
+				System.out.println("Message received: " + msg.toString() + " from " + client.getInfo("loginId") + " " + client);
+				sendToAllClients(client, client.getInfo("loginId") + "> " + tempMsg);
 			}// end else
 			client.setInfo("Message Count", msgCount + 1);
 		}
@@ -114,9 +112,7 @@ public class EchoServer extends AbstractServer {
 	protected void clientConnected(ConnectionToClient client) {
 		client.setInfo("Message Count", 0);
 		client.setInfo("status", "Unavailable");
-		client.setInfo("whoimonitor", "");
-		System.out
-				.println("A new client is attempting to connect to the server.");
+		System.out.println("A new client is attempting to connect to the server.");
 	}
 
 	@Override
@@ -129,28 +125,28 @@ public class EchoServer extends AbstractServer {
 		for (Thread currentUserThread : getClientConnections()) {
 			//client info for current thread
 			ConnectionToClient currentClient=((ConnectionToClient) currentUserThread);
-			if (!currentClient.getInfo("status").equals("Unavailable")&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))) {
-				if (client.getInfo("currentChannel").equals(currentClient.getInfo("currentChannel"))) {
-						sendToClient((ConnectionToClient) currentUserThread,message);
-					}
-				}
+			if (!currentClient.getInfo("status").equals("Unavailable")
+					&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))
+					&&client.getInfo("currentChannel").equals(currentClient.getInfo("currentChannel"))) {
+					sendToClient((ConnectionToClient) currentUserThread,message);
 			}
 		}
+	}
 
 	private void sendToClient(ConnectionToClient client, String message) {
 		try {
 			for (Thread currentUserThread : getClientConnections()) {
 				//client info for current thread
 				ConnectionToClient currentClient=((ConnectionToClient) currentUserThread);
-				if (!currentClient.getInfo("whoimonitor").equals("")) {
+				if (currentClient.getInfo("whoimonitor") != null) {
+					//if someone is monitoring somebody forward the message from that user.
 					if (currentClient.getInfo("whoimonitor").equals(client.getInfo("loginId"))) {
+						//if they are not blocked then forward.
 						if (!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))) {
 								currentClient.sendToClient("(monitored from "+ client.getInfo("loginId")+ ") "+ message );
 							}
-						 else
-							currentClient.sendToClient("(monitored from "+ client.getInfo("loginId")+ ") "+ message );
-					}// end if
-				}// end if
+					}
+				}
 			}// end for
 			client.sendToClient(message);
 		} catch (IOException e) {
@@ -200,7 +196,6 @@ public class EchoServer extends AbstractServer {
 		for (Thread currentUserThread : getClientConnections()) {
 			//client info for current thread
 			ConnectionToClient currentClient = ((ConnectionToClient) currentUserThread);
-			
 			if (currentClient.getInfo("loginId").equals(clientToPM)) {
 				if(!currentClient.getInfo("status").equals("Unavailable")&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))){
 					if (clientToPM.equals(client.getInfo("loginId"))) {
@@ -278,7 +273,7 @@ public class EchoServer extends AbstractServer {
 				}
 			}// end for
 
-			sendToClient(client, "User " + user + " is Offline.");
+			sendToClient(client, "User " + user + " is Offline");
 			// not offline or unavailable
 			// calculate if they've been inactive for 5 minutes+
 
