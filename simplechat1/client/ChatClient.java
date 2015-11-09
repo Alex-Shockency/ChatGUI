@@ -4,13 +4,12 @@
 
 package client;
 
-import ocsf.client.*;
-import common.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Scanner;
+
+import ocsf.client.AbstractClient;
+
+import common.ChatIF;
 
 /**
  * This class overrides some of the methods defined in the abstract superclass
@@ -29,8 +28,6 @@ public class ChatClient extends AbstractClient {
 	 * method in the client.
 	 */
 	ChatIF clientUI;
-	private ArrayList<String> blockList = new ArrayList<String>();
-	private String[] validUsers;
 	private String id = "";
 	private String password = "";
 
@@ -70,27 +67,12 @@ public class ChatClient extends AbstractClient {
 	 *            The message from the server.
 	 */
 	public void handleMessageFromServer(Object msg) {
-		if (msg instanceof String[]) {
-			validUsers = (String[]) msg;
-		} else {
 			String message = msg.toString();
-			if (message.contains(">")) {
-				if (!blockList.contains(message.substring(0,
-						message.indexOf('>')))) {
-					if (blockList.contains("server")) {
-						if (!message.substring(0, message.indexOf('>')).equals(
-								"SERVER MSG")) {
-							clientUI.display(message);
-						}
-					} else
-						clientUI.display(message);
-				}
-			} else if (message.startsWith("#password")) {
+			if (message.startsWith("#password")) {
 				password = message.substring(message.indexOf(" ") + 1,
 						message.length());
 			} else
 				clientUI.display(message);
-		}
 	}
 
 	/**
@@ -174,75 +156,19 @@ public class ChatClient extends AbstractClient {
 				clientUI.display("PORT: " + Integer.toString(getPort()));
 				break;
 			case "block":
-				if (!argument.isEmpty()) {
-					String name = argument;
-					if (!blockList.contains(name)) {
-						if (name.equals(id)) {
-							clientUI.display("You cannot block the sending of messages to yourself.");
-						} else if (!Arrays.asList(validUsers).contains(name)) {
-							clientUI.display("User " + name
-									+ " does not exist.");
-							break;
-						} else
-							clientUI.display("Messages to " + name
-									+ " are now being blocked.");
-						blockList.add(name);
-					} else {
-						clientUI.display("Messages from " + name
-								+ " are already blocked");
-						break;
-					}
-					String[] blockArray = blockList
-							.toArray(new String[blockList.size()]);
-					sendToServer(blockArray);
-				}
-				break;
 			case "unblock":
-				if (!argument.isEmpty()) {
-					String name = argument;
-					if (blockList.contains(name)) {
-						clientUI.display("Messages to " + name
-								+ " are now unblocked.");
-						blockList.remove(name);
-					}
-				} else {
-					clientUI.display("All users have been unblocked.");
-					blockList.clear();
-				}
-				String[] blockArray = blockList.toArray(new String[blockList
-						.size()]);
-				sendToServer(blockArray);
-				break;
 			case "whoiblock":
-				if (blockList.size() == 0) {
-					clientUI.display("No blocking is in effect.");
-				} else {
-					for (int i = 0; i < blockList.size(); i++) {
-						clientUI.display("Messages from " + blockList.get(i)
-								+ " are blocked");
-					}
-				}
-				break;
 			case "whoblocksme":
-				sendToServer(command);
-				break;
 			case "pm":
-				sendToServer(command);
-				break;
 			case "status":
-				sendToServer(command);
-				break;
 			case "notavailable":
-				sendToServer(command);
-				break;
 			case "available":
 				sendToServer(command);
 				break;
 			case "createChannel":
 				if (argument.length() == 0) {
 					clientUI.display("ERROR - no argument provided");
-				} else
-				{
+				} else {
 					sendToServer(command);
 				}
 				break;
@@ -258,8 +184,17 @@ public class ChatClient extends AbstractClient {
 			case "channelStatus":
 				sendToServer(command);
 				break;
-			default:
-				clientUI.display("ERROR - invalid command");
+			case "monitor":
+				if (argument.length() == 0) {
+					clientUI.display("ERROR - no argument provided");
+				} else if (argument.equals(this.id)) {
+					System.out.println("ERROR - you can not monitor yourself.");
+				} else {
+					sendToServer(command);
+				}
+				break;
+//			default:
+//				clientUI.display("ERROR - invalid command");
 			}
 		}
 	}
@@ -291,6 +226,7 @@ public class ChatClient extends AbstractClient {
 	@SuppressWarnings("resource")
 	private void setPassword() {
 		Scanner sc = new Scanner(System.in);
+		System.out.println("Login: " + id);
 		System.out.print("Set Password: ");
 		password = sc.nextLine();
 		clientUI.display("Password set to: " + password);
