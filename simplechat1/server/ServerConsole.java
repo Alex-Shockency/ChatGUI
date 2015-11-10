@@ -1,19 +1,13 @@
+package server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import common.ChatIF;
-
-public class ServerConsole implements ChatIF {
+public class ServerConsole {
 	final public static int DEFAULT_PORT = 5555;
 	EchoServer server;
-
-	@Override
-	public void display(String message) {
-
-	}
-
+	
 	public ServerConsole(File file, String host, int port) {
 		try {
 			server = new EchoServer(port);

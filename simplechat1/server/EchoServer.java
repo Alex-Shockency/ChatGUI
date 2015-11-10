@@ -1,3 +1,4 @@
+package server;
 // This file contains material supporting section 3.7 of the textbook:
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
@@ -12,6 +13,7 @@ import java.util.Scanner;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
+import ocsf.server.ObservableServer;
 
 /**
  * This class overrides some of the methods in the abstract superclass in order
@@ -23,7 +25,7 @@ import ocsf.server.ConnectionToClient;
  * @author Paul Holden
  * @version July 2000
  */
-public class EchoServer extends AbstractServer {
+public class EchoServer extends ObservableServer {
 	// Class variables *************************************************
 
 	/**
@@ -61,6 +63,8 @@ public class EchoServer extends AbstractServer {
 	 */
 	public void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		client.setInfo("latestActive", System.currentTimeMillis());
+		//when message is sent status is changed to online.
+		//used for when the user is idle
 		if (!client.getInfo("status").equals("Unavailable")) {
 			client.setInfo("status", "Online");
 		}

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import ocsf.client.AbstractClient;
-
+import ocsf.client.ObservableClient;
 import common.ChatIF;
 
 /**
@@ -20,7 +20,7 @@ import common.ChatIF;
  * @author Fran&ccedil;ois B&eacute;langer
  * @version July 2000
  */
-public class ChatClient extends AbstractClient {
+public class ChatClient extends ObservableClient {
 	// Instance variables **********************************************
 
 	/**
