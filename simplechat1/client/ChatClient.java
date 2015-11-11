@@ -29,7 +29,7 @@ public class ChatClient extends ObservableClient {
 	 */
 	ChatIF clientUI;
 	private String id = "";
-	private String password = "";
+//	private String password = "";
 
 	// Constructors ****************************************************
 
@@ -44,7 +44,7 @@ public class ChatClient extends ObservableClient {
 	 *            The interface type variable.
 	 */
 
-	public ChatClient(String login, String host, int port, ChatIF clientUI)
+	public ChatClient(String login,String password, String host, int port, ChatIF clientUI)
 			throws IOException {
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
@@ -52,7 +52,7 @@ public class ChatClient extends ObservableClient {
 		try {
 			openConnection();
 			sendToServer("#login " + login);
-			passwordCheck();
+			sendToServer("#password "+password);
 		} catch (IOException e) {
 			System.out.println("Cannot open connection.  Awaiting command.");
 		}
@@ -68,10 +68,10 @@ public class ChatClient extends ObservableClient {
 	 */
 	public void handleMessageFromServer(Object msg) {
 			String message = msg.toString();
-			if (message.startsWith("#password")) {
-				password = message.substring(message.indexOf(" ") + 1,
-						message.length());
-			} else
+//			if (message.startsWith("#password")) {
+//				password = message.substring(message.indexOf(" ") + 1,
+//						message.length());
+//			} else
 				clientUI.display(message);
 	}
 
@@ -146,7 +146,7 @@ public class ChatClient extends ObservableClient {
 				} else {
 					openConnection();
 					sendToServer("#login " + id);
-					passwordCheck();
+					//passwordCheck();
 				}
 				break;
 			case "gethost":
@@ -199,44 +199,44 @@ public class ChatClient extends ObservableClient {
 		}
 	}
 
-	@SuppressWarnings("resource")
-	private boolean passwordCheck() {
-		Scanner sc = new Scanner(System.in);
-		if (password.isEmpty()) {
-			setPassword();
-		}
-		System.out.println("Login: " + id);
-		System.out.print("Password: ");
-		String temp = sc.nextLine();
-		if (temp.equals(password)) {
-			try {
-				sendToServer(true);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return true;
-		} else {
-			System.out.println("ERROR - Invalid login information try again.");
-			passwordCheck();
-			return false;
-		}
-	}
-
-	@SuppressWarnings("resource")
-	private void setPassword() {
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Login: " + id);
-		System.out.print("Set Password: ");
-		password = sc.nextLine();
-		clientUI.display("Password set to: " + password);
-		try {
-			sendToServer("#setPassword " + password);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	@SuppressWarnings("resource")
+//	private boolean passwordCheck() {
+//		Scanner sc = new Scanner(System.in);
+//		if (password.isEmpty()) {
+//			setPassword();
+//		}
+//		System.out.println("Login: " + id);
+//		System.out.print("Password: ");
+//		String temp = sc.nextLine();
+//		if (temp.equals(password)) {
+//			try {
+//				sendToServer(true);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return true;
+//		} else {
+//			System.out.println("ERROR - Invalid login information try again.");
+//			passwordCheck();
+//			return false;
+//		}
+//	}
+//
+//	@SuppressWarnings("resource")
+//	private void setPassword() {
+//		Scanner sc = new Scanner(System.in);
+//		System.out.println("Login: " + id);
+//		System.out.print("Set Password: ");
+//		password = sc.nextLine();
+//		clientUI.display("Password set to: " + password);
+//		try {
+//			sendToServer("#setPassword " + password);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * This method terminates the client.
