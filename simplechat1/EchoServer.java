@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
+import ocsf.server.ObservableServer;
 
 /**
  * This class overrides some of the methods in the abstract superclass in order
@@ -23,7 +23,7 @@ import ocsf.server.ConnectionToClient;
  * @author Paul Holden
  * @version July 2000
  */
-public class EchoServer extends AbstractServer {
+public class EchoServer extends ObservableServer {
 	// Class variables *************************************************
 
 	/**
