@@ -146,27 +146,36 @@ public class LoginGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        String Username=jTextField1.getText();
-        char[] Password=jPasswordField1.getPassword();
-        try{
-        if(jTextField2.getText().isEmpty()){
-        	jTextField2.setText("5555");
-        }
-        int Port=Integer.parseInt(jTextField2.getText());
-        }
-        catch(Exception e){
-          //ERROR HANDLING GOES HERE
-          showMessageDialog(this,"Suggested port is not an integer.","Error",JOptionPane.ERROR_MESSAGE);
-        }
-        if(jTextField3.getText().isEmpty()){
-        	jTextField3.setText("localhost");
-        }
-        String Host=jTextField3.getText();
-        System.out.println(Username);
-        System.out.println(Password);        
-        Arrays.fill(Password, '0');
-        System.out.println(Password);
+		// TODO add your handling code here:
+		String Username = jTextField1.getText();
+		char[] Password = jPasswordField1.getPassword();
+		String Host;
+		int Port;
+		try {
+			if (jTextField2.getText().isEmpty()) {
+				jTextField2.setText("5555");
+			}
+			Port = Integer.parseInt(jTextField2.getText());
+		} catch (Exception e) {
+			// ERROR HANDLING GOES HERE
+			showMessageDialog(this, "Suggested port is not an integer.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			Port = 5555;
+		}
+		if (jTextField3.getText().isEmpty()) {
+			jTextField3.setText("localhost");
+		}
+		Host = jTextField3.getText();
+		final String UsernameTemp = Username;
+		final String PasswordTemp = new String(Password);
+		final String HostTemp = Host;
+		final int PortTemp = Port;
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				ClientGUI gui = new ClientGUI(UsernameTemp, PasswordTemp, HostTemp, PortTemp);
+				gui.setVisible(true);
+			}
+		});
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
