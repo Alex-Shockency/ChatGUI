@@ -150,11 +150,17 @@ public class LoginGUI extends javax.swing.JFrame {
         String Username=jTextField1.getText();
         char[] Password=jPasswordField1.getPassword();
         try{
+        if(jTextField2.getText().isEmpty()){
+        	jTextField2.setText("5555");
+        }
         int Port=Integer.parseInt(jTextField2.getText());
         }
         catch(Exception e){
           //ERROR HANDLING GOES HERE
           showMessageDialog(this,"Suggested port is not an integer.","Error",JOptionPane.ERROR_MESSAGE);
+        }
+        if(jTextField3.getText().isEmpty()){
+        	jTextField3.setText("localhost");
         }
         String Host=jTextField3.getText();
         System.out.println(Username);
