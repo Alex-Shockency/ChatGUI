@@ -51,8 +51,7 @@ public class ChatClient extends ObservableClient {
 		id = login;
 		try {
 			openConnection();
-			sendToServer("#login " + login);
-			sendToServer("#password "+password);
+			sendToServer("#login " + login + " " + password);
 		} catch (IOException e) {
 			System.out.println("Cannot open connection.  Awaiting command.");
 		}
@@ -193,8 +192,8 @@ public class ChatClient extends ObservableClient {
 					sendToServer(command);
 				}
 				break;
-//			default:
-//				clientUI.display("ERROR - invalid command");
+			default:
+				clientUI.display("ERROR - invalid command");
 			}
 		}
 	}

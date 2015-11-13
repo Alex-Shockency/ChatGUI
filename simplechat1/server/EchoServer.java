@@ -125,7 +125,7 @@ public class EchoServer extends ObservableServer {
 	}
 
 	// Class methods ***************************************************
-	private void sendToAllClients(ConnectionToClient client, String message) {
+	private void sendToAllClients(ConnectionToClient client, Object message) {
 		for (Thread currentUserThread : getClientConnections()) {
 			//client info for current thread
 			ConnectionToClient currentClient=((ConnectionToClient) currentUserThread);
@@ -137,7 +137,7 @@ public class EchoServer extends ObservableServer {
 		}
 	}
 
-	private void sendToClient(ConnectionToClient client, String message) {
+	private void sendToClient(ConnectionToClient client, Object message) {
 		try {
 			for (Thread currentUserThread : getClientConnections()) {
 				//client info for current thread
@@ -162,11 +162,12 @@ public class EchoServer extends ObservableServer {
 	private void loginId(int msgCount, String message, ConnectionToClient client) {
 		if (message.startsWith("#login")) {
 			if (msgCount == 0) {
-				client.setInfo("loginId",message.substring(7, message.length()));
+				String [] loginInfo=message.split(" ",3);
+				client.setInfo("loginId",loginInfo[1]);
 				//Initialize blockList of client to empty list.
 				ArrayList<String> tempList=new ArrayList<String>();
 				blockLists.put((String) client.getInfo("loginId"),tempList);
-				passwordCheck(client);
+				passwordCheck(client,loginInfo[2]);
 				if (!validUsers.contains(client.getInfo("loginId"))) {
 					validUsers.add((String) client.getInfo("loginId"));
 				}
@@ -182,13 +183,28 @@ public class EchoServer extends ObservableServer {
 		}
 	}
 
-	private void passwordCheck(ConnectionToClient client) {
+	private void passwordCheck(ConnectionToClient client,String Password) {
 		if (validUsers.contains(client.getInfo("loginId"))) {
 			for (Entry<String, String> entry : userPasswords.entrySet()) {
 				String key = entry.getKey();
 				Object value = entry.getValue();
 				if (key.equals(client.getInfo("loginId"))) {
-					sendToClient(client, "#password " + value);
+					if(Password.equals(value)){
+						//Login was successful
+						serverChannels.get("public").add(
+								(String) client.getInfo("loginId"));
+						client.setInfo("status", "Online");
+						client.setInfo("currentChannel", "public");
+						System.out.println(client.getInfo("loginId")
+								+ " has logged on.");
+						sendToAllClients(client, client.getInfo("loginId")
+								+ " has logged on.");
+					}
+					else
+					{
+						//Login has failed
+						System.out.println("Login Failed");
+					}
 				}
 			}
 		} else {
@@ -472,7 +488,7 @@ public class EchoServer extends ObservableServer {
 			String line;
 			while (reader.hasNextLine()) {
 				line = reader.nextLine();
-				String[] arrayLine = line.split(",");
+				String[] arrayLine = line.split("[,\\s]+");
 				userPasswords.put(arrayLine[0], arrayLine[1]);
 				validUsers.add(arrayLine[0]);
 			}

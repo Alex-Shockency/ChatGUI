@@ -37,8 +37,6 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
             ch = new ChatClient(name,password,"localhost",5555,this);
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             lastMessageUser = "";
-            ch.sendToServer("#login " + name);
-            ch.sendToServer("#password " + password);
         } catch (Exception ex) {
             System.exit(-1);
         }
