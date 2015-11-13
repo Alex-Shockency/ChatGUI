@@ -176,6 +176,7 @@ public class LoginGUI extends javax.swing.JFrame {
 				gui.setVisible(true);
 			}
 		});
+		dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
