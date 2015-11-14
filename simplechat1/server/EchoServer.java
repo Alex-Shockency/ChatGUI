@@ -68,18 +68,6 @@ public class EchoServer extends ObservableServer {
 		if (!client.getInfo("status").equals("Unavailable")) {
 			client.setInfo("status", "Online");
 		}
-			if (msg.equals(true)) {
-				// if the login is sucessful
-				serverChannels.get("public").add(
-						(String) client.getInfo("loginId"));
-				client.setInfo("status", "Online");
-				client.setInfo("currentChannel", "public");
-				System.out.println(client.getInfo("loginId")
-						+ " has logged on.");
-				sendToAllClients(client, client.getInfo("loginId")
-						+ " has logged on.");
-				return;
-			}
 			String tempMsg = msg.toString();
 			int msgCount = (int) client.getInfo("Message Count");
 
@@ -203,12 +191,17 @@ public class EchoServer extends ObservableServer {
 					else
 					{
 						//Login has failed
-						System.out.println("Login Failed");
+						System.out.println("Login failed");
+						serverNotification sn = new serverNotification("LOGIN_FAILED");
+						sendToClient(client,sn);
+						
 					}
 				}
 			}
 		} else {
 			sendToClient(client, "Error - User is not valid please set password.");
+			serverNotification sn = new serverNotification("LOGIN_FAILED");
+			sendToClient(client,sn);
 		}
 	}
 

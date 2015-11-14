@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import ocsf.client.AbstractClient;
 import ocsf.client.ObservableClient;
+import server.serverNotification;
 import common.ChatIF;
 
 /**
@@ -66,12 +67,14 @@ public class ChatClient extends ObservableClient {
 	 *            The message from the server.
 	 */
 	public void handleMessageFromServer(Object msg) {
+		if (msg instanceof serverNotification) {
+			serverNotification sn = (serverNotification) msg;
+			setChanged();
+			notifyObservers(sn);
+		} else {
 			String message = msg.toString();
-//			if (message.startsWith("#password")) {
-//				password = message.substring(message.indexOf(" ") + 1,
-//						message.length());
-//			} else
-				clientUI.display(message);
+			clientUI.display(message);
+		}
 	}
 
 	/**
@@ -80,11 +83,12 @@ public class ChatClient extends ObservableClient {
 	 * @param message
 	 *            The message from the UI.
 	 */
-	public void handleMessageFromClientUI(String message) {
+	public void handleMessageFromClientUI(Object message) {
 		try {
-			if (message.length() != 0) {
-				if (message.charAt(0) == '#') {
-					handleCommand(message);
+			if (((String)message).length() != 0) {
+				String messageString = (String) message;
+				if (messageString.charAt(0) == '#') {
+					handleCommand(messageString);
 				} else {
 					sendToServer(message);
 				}

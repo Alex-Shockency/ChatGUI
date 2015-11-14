@@ -1,4 +1,5 @@
 package gui;
+import static javax.swing.JOptionPane.showMessageDialog;
 import client.ChatClient;
 import common.ChatIF;
 
@@ -12,9 +13,12 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultCaret;
+
+import server.serverNotification;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -34,7 +38,8 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
      */
     public ClientGUI(String name, String password, String hostname, int portNumber) {
         try {
-            ch = new ChatClient(name,password,"localhost",5555,this);
+            ch = new ChatClient(name,password,hostname,portNumber,this);
+            ch.addObserver(this);
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             lastMessageUser = "";
         } catch (Exception ex) {
@@ -176,7 +181,20 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
 
     @Override
     public void update(Observable o, Object arg) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(arg instanceof serverNotification){
+        	serverNotification sn = (serverNotification) arg;
+        	if(sn.getMessage().equals("LOGIN_FAILED")){
+        		showMessageDialog(this, "Login failed. Please try again.",
+    					"Error", JOptionPane.ERROR_MESSAGE);
+        		setVisible(false);
+        		java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        new LoginGUI().setVisible(true);
+                    }
+                });
+        		dispose();
+        	}
+        }
     }
 
     @Override
