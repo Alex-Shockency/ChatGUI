@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JSlider;
@@ -37,7 +40,7 @@ public class PaintFrame extends JFrame{
     paint = new PaintPanel();
     paint.setPreferredSize(new Dimension(500, 500));
     this.add(paint);
-    JColorChooser choose = new JColorChooser();
+    final JColorChooser choose = new JColorChooser();
     choose.setColor(Color.black);
     choose.getSelectionModel().addChangeListener(new ChangeListener() {
 
@@ -49,7 +52,7 @@ public class PaintFrame extends JFrame{
 
     });
     this.add(choose.getChooserPanels()[1]);
-    JSlider slide = new JSlider(1, 100);
+    final JSlider slide = new JSlider(1, 100);
     slide.setValue(paint.radius);
     slide.addChangeListener(new ChangeListener() {
 
@@ -61,6 +64,17 @@ public class PaintFrame extends JFrame{
 
     });
     this.add(slide);
+    JButton clearButton = new JButton("Clear");
+    clearButton.addActionListener(new ActionListener(){
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			paint.clear();
+			
+		}
+    	
+    });
+    this.add(clearButton);
     this.pack();
     this.setLocationRelativeTo(null);
     this.setVisible(true);
