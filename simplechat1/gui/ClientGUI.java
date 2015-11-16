@@ -2,11 +2,15 @@ package gui;
 import static javax.swing.JOptionPane.showMessageDialog;
 import client.ChatClient;
 import common.ChatIF;
+import gui.channelGUI.CreateChannelFrame;
+import gui.channelGUI.JoinChannelFrame;
+import gui.channelGUI.LeaveChannelFrame;
 
 import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Observable;
@@ -19,6 +23,10 @@ import javax.swing.UIManager;
 import javax.swing.text.DefaultCaret;
 
 import server.serverNotification;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -47,6 +55,8 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         }
         initComponents();
         setLocationRelativeTo(null);
+        
+        
     }
 
     /**
@@ -57,6 +67,62 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+    	menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+        
+        mnUser = new JMenu("User");
+        menuBar.add(mnUser);
+        
+        mntmLogin = new JMenuItem("Login");
+        mnUser.add(mntmLogin);
+        
+        mntmLogoff = new JMenuItem("Logoff");
+        mnUser.add(mntmLogoff);
+        
+        mnNewMenu_2 = new JMenu("Set Status");
+        mnUser.add(mnNewMenu_2);
+        
+        mntmAvailable = new JMenuItem("Available");
+        mnNewMenu_2.add(mntmAvailable);
+        
+        mntmUnavailable = new JMenuItem("Unavailable");
+        mnNewMenu_2.add(mntmUnavailable);
+        
+        mnNewMenu = new JMenu("Channel");
+        menuBar.add(mnNewMenu);
+        
+        mntmCreate = new JMenuItem("Create");
+        mnNewMenu.add(mntmCreate);
+        
+        mntmJoin = new JMenuItem("Join");
+        mnNewMenu.add(mntmJoin);
+        
+        mntmLeave = new JMenuItem("Leave");
+        mnNewMenu.add(mntmLeave);
+        
+        mnNewMenu_1 = new JMenu("Status");
+        menuBar.add(mnNewMenu_1);
+        
+        mntmUser = new JMenuItem("User");
+        mnNewMenu_1.add(mntmUser);
+        
+        mntmChannel = new JMenuItem("Channel");
+        mnNewMenu_1.add(mntmChannel);
+        
+        mnBlocking = new JMenu("Blocking");
+        menuBar.add(mnBlocking);
+        
+        mntmBlock = new JMenuItem("Block");
+        mnBlocking.add(mntmBlock);
+        
+        mnNewMenu_3 = new JMenu("Unblock");
+        mnBlocking.add(mnNewMenu_3);
+        
+        mntmNewMenuItem_1 = new JMenuItem("Unblock User");
+        mnNewMenu_3.add(mntmNewMenuItem_1);
+        
+        mntmNewMenuItem_2 = new JMenuItem("Unblock All");
+        mnNewMenu_3.add(mntmNewMenuItem_2);
 
         GUITitle = new javax.swing.JLabel();
         MessageInputArea = new javax.swing.JTextField();
@@ -99,7 +165,24 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
                 ChannelOptionsButtonActionPerformed(evt);
             }
         });
-
+        
+        mntmCreate.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		CreateChannelOptionSelected(evt);
+        	}
+        });
+        mntmLeave.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		LeaveChannelOptionSelected(evt);
+        	}
+        });
+        
+        mntmJoin.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		JoinChannelOptionSelected(evt);
+        	}
+        });
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -144,7 +227,35 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void MessageSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MessageSendButtonActionPerformed
+    private void CreateChannelOptionSelected(ActionEvent evt) {
+    	   CreateChannelFrame chan = CreateChannelFrame.getInstance(this);
+           Point p = MouseInfo.getPointerInfo().getLocation();
+           int xOffset = (int) p.getX() - 25;
+           int yOffset = (int) p.getY() - 25;
+           chan.setLocation(xOffset, yOffset);
+           chan.setVisible(true);
+           chan.setAlwaysOnTop(true);
+	}
+    private void JoinChannelOptionSelected(ActionEvent evt) {
+ 	    JoinChannelFrame chan = JoinChannelFrame.getInstance(this);
+        Point p = MouseInfo.getPointerInfo().getLocation();
+        int xOffset = (int) p.getX() - 25;
+        int yOffset = (int) p.getY() - 25;
+        chan.setLocation(xOffset, yOffset);
+        chan.setVisible(true);
+        chan.setAlwaysOnTop(true);
+	}
+    private void LeaveChannelOptionSelected(ActionEvent evt) {
+ 	   LeaveChannelFrame chan = LeaveChannelFrame.getInstance(this);
+        Point p = MouseInfo.getPointerInfo().getLocation();
+        int xOffset = (int) p.getX() - 25;
+        int yOffset = (int) p.getY() - 25;
+        chan.setLocation(xOffset, yOffset);
+        chan.setVisible(true);
+        chan.setAlwaysOnTop(true);
+	}
+
+	private void MessageSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MessageSendButtonActionPerformed
         String text = MessageInputArea.getText();
         MessageInputArea.setText("");
             ch.handleMessageFromClientUI(text);
@@ -177,6 +288,26 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     private javax.swing.JPanel MessagePanel;
     private javax.swing.JScrollPane MessageScrollPane;
     private javax.swing.JButton MessageSendButton;
+    private JMenuBar menuBar;
+    private JMenu mnNewMenu;
+    private JMenuItem mntmNewMenuItem;
+    private JMenu mnNewMenu_1;
+    private JMenu mnUser;
+    private JMenuItem mntmLeave;
+    private JMenuItem mntmLogin;
+    private JMenuItem mntmLogoff;
+    private JMenuItem mntmBlock;
+    private JMenu mnBlocking;
+    private JMenuItem mntmUser;
+    private JMenuItem mntmChannel;
+    private JMenu mnNewMenu_2;
+    private JMenuItem mntmAvailable;
+    private JMenuItem mntmUnavailable;
+    private JMenuItem mntmCreate;
+    private JMenu mnNewMenu_3;
+    private JMenuItem mntmNewMenuItem_1;
+    private JMenuItem mntmNewMenuItem_2;
+    private JMenuItem mntmJoin;
     // End of variables declaration//GEN-END:variables
 
     @Override

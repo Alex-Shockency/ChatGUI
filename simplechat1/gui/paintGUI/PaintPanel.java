@@ -1,4 +1,4 @@
-package gui;
+package gui.paintGUI;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -14,15 +14,25 @@ public class PaintPanel extends JPanel {
     return canvas;
   }
   
+  public void clear(){
+	  Graphics2D canvasGraphics = canvas.createGraphics();
+	  canvasGraphics.setColor(Color.white);
+	  canvasGraphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+	  canvasGraphics.dispose();
+	  repaint();
+  }
+  
   private class drawAdapter extends MouseAdapter{
     @Override
     public void mouseDragged(MouseEvent e){
-      paint(e);
+      paint(e, true);
+      lastMouseLocation = e.getPoint();
     }
     
     @Override
     public void mousePressed(MouseEvent e){
-      paint(e);
+      lastMouseLocation = e.getPoint();
+      paint(e, false);
     }
     
     @Override
@@ -34,17 +44,22 @@ public class PaintPanel extends JPanel {
       repaint();
     }
     
-    public void paint(MouseEvent e){
+    public void paint(MouseEvent e, boolean drawLine){
       Graphics2D canvasGraphics = canvas.createGraphics();
       canvasGraphics.setColor(drawColor);
       int x = e.getX() - (radius/2);
       int y = e.getY() - (radius/2);
       canvasGraphics.fillOval(x, y, radius, radius);
+      if(drawLine){
+    	  canvasGraphics.setStroke(new BasicStroke(radius,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+    	  canvasGraphics.drawLine(e.getX(), e.getY(), lastMouseLocation.x, lastMouseLocation.y);
+      }
       repaint();
     }
   }
   
   private BufferedImage canvas;
+  private Point lastMouseLocation;
   private Color drawColor;
   public int radius = 10;
   
