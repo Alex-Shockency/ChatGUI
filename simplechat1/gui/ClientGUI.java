@@ -47,16 +47,13 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     public ClientGUI(String name, String password, String hostname, int portNumber) {
         try {
             ch = new ChatClient(name,password,hostname,portNumber,this);
-            ch.addObserver(this);
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             lastMessageUser = "";
         } catch (Exception ex) {
             System.exit(-1);
         }
-        initComponents();
+    	initComponents();
         setLocationRelativeTo(null);
-        
-        
     }
 
     /**
@@ -290,7 +287,6 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     private javax.swing.JButton MessageSendButton;
     private JMenuBar menuBar;
     private JMenu mnNewMenu;
-    private JMenuItem mntmNewMenuItem;
     private JMenu mnNewMenu_1;
     private JMenu mnUser;
     private JMenuItem mntmLeave;
@@ -317,13 +313,25 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         	if(sn.getMessage().equals("LOGIN_FAILED")){
         		showMessageDialog(this, "Login failed. Please try again.",
     					"Error", JOptionPane.ERROR_MESSAGE);
-        		setVisible(false);
         		java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         new LoginGUI().setVisible(true);
                     }
                 });
+        		setVisible(false);
         		dispose();
+        	}
+        	else if(sn.getMessage().equals("CONNECTION_FAILED")){
+        		showMessageDialog(this, "Failed to connect to server. Please try again.",
+    					"Error", JOptionPane.ERROR_MESSAGE);
+        		java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                    	setVisible(false);
+                		dispose();
+                        new LoginGUI().setVisible(true);
+                    }
+                });
+        		
         	}
         }
     }

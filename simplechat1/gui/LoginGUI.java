@@ -2,6 +2,8 @@ package gui;
 
 
 import java.util.Arrays;
+
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -146,7 +148,8 @@ public class LoginGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-		// TODO add your handling code here:
+		//System.out.println(((JButton)evt.getSource()).getActionListeners().length);
+    	// TODO add your handling code here:
 		String Username = jTextField1.getText();
 		char[] Password = jPasswordField1.getPassword();
 		String Host;

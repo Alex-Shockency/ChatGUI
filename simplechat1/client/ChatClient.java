@@ -5,6 +5,7 @@
 package client;
 
 import java.io.IOException;
+import java.util.Observer;
 import java.util.Scanner;
 
 import ocsf.client.AbstractClient;
@@ -51,9 +52,14 @@ public class ChatClient extends ObservableClient {
 		this.clientUI = clientUI;
 		id = login;
 		try {
+			addObserver((Observer) clientUI);
 			openConnection();
 			sendToServer("#login " + login + " " + password);
 		} catch (IOException e) {
+			serverNotification sn=new serverNotification("CONNECTION_FAILED");
+			setChanged();
+			notifyObservers(sn);
+			deleteObserver((Observer) clientUI);
 			System.out.println("Cannot open connection.  Awaiting command.");
 		}
 	}
