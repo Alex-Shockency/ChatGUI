@@ -31,7 +31,6 @@ public class PaintPanel extends JPanel {
     }
     
     public void mouseMoved(MouseEvent e){
-      System.out.println("Moved");
       repaint();
     }
     
@@ -85,51 +84,6 @@ public class PaintPanel extends JPanel {
       if(q != null)
         g.drawOval(q.x-radius/2, q.y-radius/2, radius, radius);
       
-  }
-  
-  public static void main(String[] args){
-    EventQueue.invokeLater(new Runnable(){
-
-      @Override
-      public void run() {
-        JFrame frame = new JFrame();
-        frame.setLayout(new BoxLayout(frame.getContentPane(),BoxLayout.Y_AXIS));
-        
-
-        PaintPanel paint = new PaintPanel();
-        paint.setPreferredSize(new Dimension(500, 500));
-        frame.add(paint);
-        JColorChooser choose = new JColorChooser();
-        choose.setColor(Color.black);
-        choose.getSelectionModel().addChangeListener(new ChangeListener(){
-
-          @Override
-          public void stateChanged(ChangeEvent arg0) {
-            paint.setColor(choose.getColor());
-            
-          }
-          
-        });
-        frame.add(choose.getChooserPanels()[1]);
-        JSlider slide = new JSlider(1,100);
-        slide.setValue(paint.radius);
-        slide.addChangeListener(new ChangeListener(){
-
-          @Override
-          public void stateChanged(ChangeEvent e) {
-            paint.setRadius(slide.getValue());
-            
-          }
-          
-        });
-        frame.add(slide);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        paint.initialize();
-      }
-      
-    });
   }
 
 }

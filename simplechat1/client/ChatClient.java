@@ -260,6 +260,8 @@ public class ChatClient extends ObservableClient {
 	@Override
 	protected void connectionException(Exception exception) {
 		System.out.println("Abnormal termination of connection.");
+    setChanged();
+    notifyObservers(new serverNotification("LOGIN_FAILED"));
 	}
 }
 // End of ChatClient class

@@ -4,11 +4,11 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-public class ImagePanel extends JPanel{
+public class ImageFrame extends JPanel{
 
   private BufferedImage b;
   
-  public ImagePanel(BufferedImage b){
+  public ImageFrame(BufferedImage b){
     this.b = b;
   }
   
