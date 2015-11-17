@@ -380,6 +380,7 @@ public class EchoServer extends ObservableServer {
 		case "logoff":
 			try {
 				client.setInfo("status", "Offline");
+				sendToAllClients(client,client.getInfo("loginId")+" has logged off");
 				client.close();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -467,6 +468,7 @@ public class EchoServer extends ObservableServer {
 						client.getInfo("loginId")
 								+ " has disconnected from channel "
 								+ client.getInfo("currentChannel"));
+				serverChannels.get(client.getInfo("currentChannel")).remove(client.getInfo("loginId"));
 				client.setInfo("currentChannel", "public");
 				sendToClient(client,new serverNotification("CHANNEL_CHANGED","public"));
 			}

@@ -7,6 +7,8 @@ import gui.blockGUI.UnblockUserFrame;
 import gui.channelGUI.CreateChannelFrame;
 import gui.channelGUI.JoinChannelFrame;
 import gui.channelGUI.LeaveChannelFrame;
+import gui.statusGUI.ChannelStatusFrame;
+import gui.statusGUI.UserStatusFrame;
 
 import java.awt.Color;
 import java.awt.MouseInfo;
@@ -48,6 +50,7 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
      * Creates new form ClientGUI
      */
     public ClientGUI(String name, String password, String hostname, int portNumber) {
+    	setTitle("Chat Client");
         try {
         	initComponents();
             setLocationRelativeTo(null);
@@ -73,9 +76,6 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         
         mnUser = new JMenu("User");
         menuBar.add(mnUser);
-        
-        mntmLogin = new JMenuItem("Login");
-        mnUser.add(mntmLogin);
         
         mntmLogoff = new JMenuItem("Logoff");
         mnUser.add(mntmLogoff);
@@ -104,11 +104,11 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         mnNewMenu_1 = new JMenu("Status");
         menuBar.add(mnNewMenu_1);
         
-        mntmUser = new JMenuItem("User");
-        mnNewMenu_1.add(mntmUser);
+        mntmStatusUser = new JMenuItem("User");
+        mnNewMenu_1.add(mntmStatusUser);
         
-        mntmChannel = new JMenuItem("Channel");
-        mnNewMenu_1.add(mntmChannel);
+        mntmStatusChannel = new JMenuItem("Channel");
+        mnNewMenu_1.add(mntmStatusChannel);
         
         mnBlocking = new JMenu("Blocking");
         menuBar.add(mnBlocking);
@@ -191,6 +191,36 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         mntmUnblockAll.addActionListener(new java.awt.event.ActionListener(){
         	public void actionPerformed(java.awt.event.ActionEvent evt){
         		UnblockAllOptionSelected(evt);
+        	}
+        });
+        mntmLogoff.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		LogoffOptionSelected(evt);
+        	}
+        });
+        mntmAvailable.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		AvailableOptionSelected(evt);
+        	}
+        });
+        mntmUnavailable.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		UnavailableOptionSelected(evt);
+        	}
+        });
+        mntmStatusUser.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		StatusUserOptionSelected(evt);
+        	}
+        });
+        mntmStatusUser.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		StatusUserOptionSelected(evt);
+        	}
+        });
+        mntmStatusChannel.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		StatusChannelOptionSelected(evt);
         	}
         });
         
@@ -289,6 +319,54 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
 			e.printStackTrace();
 		}
  	}
+    private void LogoffOptionSelected(ActionEvent evt) {
+		try {
+			ch.handleCommand("#logoff");
+//			showMessageDialog(this, "Login failed. Please try again.",
+//					"Error", JOptionPane.ERROR_MESSAGE);
+			java.awt.EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					new LoginGUI().setVisible(true);
+				}
+			});
+			setVisible(false);
+			dispose();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+ 	}
+    private void AvailableOptionSelected(ActionEvent evt) {
+		try {
+			ch.sendToServer("#available");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+ 	}
+    private void UnavailableOptionSelected(ActionEvent evt) {
+		try {
+			ch.sendToServer("#notavailable");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+ 	}
+    private void StatusUserOptionSelected(ActionEvent evt) {
+    	UserStatusFrame chan = UserStatusFrame.getInstance(this);
+        Point p = MouseInfo.getPointerInfo().getLocation();
+        int xOffset = (int) p.getX() - 25;
+        int yOffset = (int) p.getY() - 25;
+        chan.setLocation(xOffset, yOffset);
+        chan.setVisible(true);
+        chan.setAlwaysOnTop(true);
+ 	}
+    private void StatusChannelOptionSelected(ActionEvent evt) {
+    	ChannelStatusFrame chan = ChannelStatusFrame.getInstance(this);
+        Point p = MouseInfo.getPointerInfo().getLocation();
+        int xOffset = (int) p.getX() - 25;
+        int yOffset = (int) p.getY() - 25;
+        chan.setLocation(xOffset, yOffset);
+        chan.setVisible(true);
+        chan.setAlwaysOnTop(true);
+ 	}
 
 	private void MessageSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MessageSendButtonActionPerformed
         String text = MessageInputArea.getText();
@@ -319,12 +397,11 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     private JMenu mnNewMenu_1;
     private JMenu mnUser;
     private JMenuItem mntmLeave;
-    private JMenuItem mntmLogin;
     private JMenuItem mntmLogoff;
     private JMenuItem mntmBlock;
     private JMenu mnBlocking;
-    private JMenuItem mntmUser;
-    private JMenuItem mntmChannel;
+    private JMenuItem mntmStatusUser;
+    private JMenuItem mntmStatusChannel;
     private JMenu mnNewMenu_2;
     private JMenuItem mntmAvailable;
     private JMenuItem mntmUnavailable;

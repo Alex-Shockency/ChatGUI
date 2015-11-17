@@ -30,8 +30,8 @@ public class ChatClient extends ObservableClient {
 	 * method in the client.
 	 */
 	ChatIF clientUI;
-	private String id = "";
-//	private String password = "";
+	private String login = "";
+	private String password = "";
 
 	// Constructors ****************************************************
 
@@ -50,7 +50,8 @@ public class ChatClient extends ObservableClient {
 			throws IOException {
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
-		id = login;
+		this.login = login;
+		this.password=password;
 		try {
 			addObserver((Observer) clientUI);
 			openConnection();
@@ -105,7 +106,7 @@ public class ChatClient extends ObservableClient {
 		}
 	}
 
-	private void handleCommand(String command) throws IOException {
+	public void handleCommand(String command) throws IOException {
 		// parse string
 		// check #
 		// check command
@@ -154,8 +155,7 @@ public class ChatClient extends ObservableClient {
 					clientUI.display("ERROR - client is already connected to a server");
 				} else {
 					openConnection();
-					sendToServer("#login " + id);
-					//passwordCheck();
+					sendToServer("#login " + login + " " + password);
 				}
 				break;
 			case "gethost":
@@ -196,7 +196,7 @@ public class ChatClient extends ObservableClient {
 			case "monitor":
 				if (argument.length() == 0) {
 					clientUI.display("ERROR - no argument provided");
-				} else if (argument.equals(this.id)) {
+				} else if (argument.equals(login)) {
 					System.out.println("ERROR - you can not monitor yourself.");
 				} else {
 					sendToServer(command);
