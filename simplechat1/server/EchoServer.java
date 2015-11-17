@@ -192,7 +192,7 @@ public class EchoServer extends ObservableServer {
 					{
 						//Login has failed
 						System.out.println("Login failed");
-						serverNotification sn = new serverNotification("LOGIN_FAILED");
+						serverNotification sn = new serverNotification("LOGIN_FAILED","");
 						sendToClient(client,sn);
 						
 					}
@@ -200,7 +200,7 @@ public class EchoServer extends ObservableServer {
 			}
 		} else {
 			sendToClient(client, "Error - User is not valid please set password.");
-			serverNotification sn = new serverNotification("LOGIN_FAILED");
+			serverNotification sn = new serverNotification("LOGIN_FAILED","");
 			sendToClient(client,sn);
 		}
 	}
@@ -338,12 +338,17 @@ public class EchoServer extends ObservableServer {
 		case "unblock":
 			if(argument.isEmpty())
 			{
-				blockLists.get(client.getInfo("loginId")).clear();
-				sendToClient(client,"All users have been unblocked.");
+				ArrayList <String> clientBlockList=blockLists.get(client.getInfo("loginId"));
+				for(int i=0;i<clientBlockList.size();i++)
+				{
+					sendToClient(client,"Messages from "+clientBlockList.get(i)+" will now be displayed");
+				}
+				clientBlockList.clear();
 			}
-			else
+			else{
 				blockLists.get(client.getInfo("loginId")).remove(argument);
 				sendToClient(client,argument+" has been unblocked.");
+			}
 			break;
 		case "whoiblock":
 			ArrayList <String> clientBlockList=blockLists.get(client.getInfo("loginId"));
@@ -420,14 +425,14 @@ public class EchoServer extends ObservableServer {
 				//Intialize to empty list
 				serverChannels.put(argument, tempUsers);
 				serverChannels.get(argument).add((String) client.getInfo("loginId"));
-				serverChannels.get("public").remove(client.getInfo("loginId"));
+				serverChannels.get(client.getInfo("currentChannel")).remove(client.getInfo("loginId"));
 				client.setInfo("currentChannel", argument);
+				sendToClient(client,new serverNotification("CHANNEL_CHANGED",argument));
 				sendToClient(client, "Channel " + argument + " has been created.");
 				sendToAllClients(client, client.getInfo("loginId")+ " has logged in to " + argument + " channel");
 			}
 			break;
 		case "joinChannel":
-			System.out.println();
 			if (client.getInfo("status").equals("Unavailable")) {
 				sendToClient(client,"ERROR - Cannot join channel, "+ client.getInfo("loginId") + " is Unavailable");
 				break;
@@ -439,8 +444,9 @@ public class EchoServer extends ObservableServer {
 						if (key.equals(argument)) {
 							if (!serverChannels.get(key).contains(client.getInfo("loginId"))) {
 								serverChannels.get(key).add((String) client.getInfo("loginId"));
-								serverChannels.get("public").remove(client.getInfo("loginId"));
+								serverChannels.get(client.getInfo("currentChannel")).remove(client.getInfo("loginId"));
 								client.setInfo("currentChannel", argument);
+								sendToClient(client,new serverNotification("CHANNEL_CHANGED",argument));
 								sendToAllClients(client,client.getInfo("loginId")+ " has logged into "+ argument + " channel");
 							} else
 								sendToClient(client,"ERROR - already connected to channel.");
@@ -462,6 +468,7 @@ public class EchoServer extends ObservableServer {
 								+ " has disconnected from channel "
 								+ client.getInfo("currentChannel"));
 				client.setInfo("currentChannel", "public");
+				sendToClient(client,new serverNotification("CHANNEL_CHANGED","public"));
 			}
 			break;
 		case "monitor":

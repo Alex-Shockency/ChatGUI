@@ -1,13 +1,22 @@
 package gui.channelGUI;
 
+import gui.ClientGUI;
+
 import javax.swing.JFrame;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
 import javax.swing.SwingConstants;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,7 +30,7 @@ import javax.swing.SwingConstants;
  */
 public class LeaveChannelFrame extends javax.swing.JFrame {
     private static LeaveChannelFrame instance = null;
-    private static JFrame parent;
+    private static ClientGUI parent;
     private JTextField textField;
     /**
      * Creates new form ChannelFrame
@@ -30,7 +39,7 @@ public class LeaveChannelFrame extends javax.swing.JFrame {
         initComponents();
     }
     
-    public static LeaveChannelFrame getInstance(JFrame parent){
+    public static LeaveChannelFrame getInstance(ClientGUI parent){
         if(instance == null){
             instance = new LeaveChannelFrame();
             LeaveChannelFrame.parent = parent;
@@ -54,6 +63,19 @@ public class LeaveChannelFrame extends javax.swing.JFrame {
         getContentPane().add(lblNewLabel);
         
         textField = new JTextField();
+        textField.addKeyListener(new KeyAdapter() {
+        	@Override
+        	public void keyPressed(KeyEvent e) {
+        		if(e.getKeyCode()==KeyEvent.VK_ENTER){
+        			try {
+    					parent.ch.sendToServer("#leaveChannel "+textField.getText());
+    					dispose();
+    				} catch (IOException e1) {
+    					e1.printStackTrace();
+    				}
+        		}
+        	}
+        });
         getContentPane().add(textField);
         textField.setColumns(23);
         
@@ -61,9 +83,26 @@ public class LeaveChannelFrame extends javax.swing.JFrame {
         btnNewButton.setVerticalAlignment(SwingConstants.BOTTOM);
         getContentPane().add(btnNewButton);
         
+        btnNewButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		//attempt to join selected channel
+        		try {
+					parent.ch.sendToServer("#leaveChannel "+textField.getText());
+					dispose();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+        	}
+        });
+        
         JButton btnNewButton_1 = new JButton("Cancel");
         btnNewButton_1.setVerticalAlignment(SwingConstants.BOTTOM);
         getContentPane().add(btnNewButton_1);
+        btnNewButton_1.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dispose();
+        	}
+        });
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

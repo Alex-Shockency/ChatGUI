@@ -1,15 +1,23 @@
 package gui.channelGUI;
 
+import gui.ClientGUI;
+
 import javax.swing.JFrame;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+
 import java.awt.FlowLayout;
+
 import javax.swing.SwingConstants;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,7 +31,7 @@ import java.awt.event.ActionEvent;
  */
 public class JoinChannelFrame extends javax.swing.JFrame {
     private static JoinChannelFrame instance = null;
-    private static JFrame parent;
+    private static ClientGUI parent;
     private JTextField textField;
     /**
      * Creates new form ChannelFrame
@@ -32,7 +40,7 @@ public class JoinChannelFrame extends javax.swing.JFrame {
         initComponents();
     }
     
-    public static JoinChannelFrame getInstance(JFrame parent){
+    public static JoinChannelFrame getInstance(ClientGUI parent){
         if(instance == null){
             instance = new JoinChannelFrame();
             JoinChannelFrame.parent = parent;
@@ -56,13 +64,33 @@ public class JoinChannelFrame extends javax.swing.JFrame {
         getContentPane().add(lblNewLabel);
         
         textField = new JTextField();
+        textField.addKeyListener(new KeyAdapter() {
+        	@Override
+        	public void keyPressed(KeyEvent e) {
+        		if(e.getKeyCode()==KeyEvent.VK_ENTER){
+        			try {
+    					parent.ch.sendToServer("#joinChannel "+textField.getText());
+    					dispose();
+    				} catch (IOException e1) {
+    					e1.printStackTrace();
+    				}
+        		}
+        	}
+        });
         getContentPane().add(textField);
         textField.setColumns(23);
+        
         
         JButton btnNewButton = new JButton("Join");
         btnNewButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//attempt to join selected channel
+        		try {
+					parent.ch.sendToServer("#joinChannel "+textField.getText());
+					dispose();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
         	}
         });
         btnNewButton.setVerticalAlignment(SwingConstants.BOTTOM);

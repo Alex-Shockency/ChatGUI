@@ -2,6 +2,8 @@ package gui;
 import static javax.swing.JOptionPane.showMessageDialog;
 import client.ChatClient;
 import common.ChatIF;
+import gui.blockGUI.BlockUserFrame;
+import gui.blockGUI.UnblockUserFrame;
 import gui.channelGUI.CreateChannelFrame;
 import gui.channelGUI.JoinChannelFrame;
 import gui.channelGUI.LeaveChannelFrame;
@@ -23,6 +25,7 @@ import javax.swing.UIManager;
 import javax.swing.text.DefaultCaret;
 
 import server.serverNotification;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -39,21 +42,22 @@ import javax.swing.JPanel;
  * @author joshua
  */
 public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
-    ChatClient ch;
+    public ChatClient ch;
     String lastMessageUser;
     /**
      * Creates new form ClientGUI
      */
     public ClientGUI(String name, String password, String hostname, int portNumber) {
         try {
+        	initComponents();
+            setLocationRelativeTo(null);
             ch = new ChatClient(name,password,hostname,portNumber,this);
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             lastMessageUser = "";
         } catch (Exception ex) {
             System.exit(-1);
         }
-    	initComponents();
-        setLocationRelativeTo(null);
+    	
     }
 
     /**
@@ -115,11 +119,11 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         mnNewMenu_3 = new JMenu("Unblock");
         mnBlocking.add(mnNewMenu_3);
         
-        mntmNewMenuItem_1 = new JMenuItem("Unblock User");
-        mnNewMenu_3.add(mntmNewMenuItem_1);
+        mntmUnblockUser = new JMenuItem("Unblock User");
+        mnNewMenu_3.add(mntmUnblockUser);
         
-        mntmNewMenuItem_2 = new JMenuItem("Unblock All");
-        mnNewMenu_3.add(mntmNewMenuItem_2);
+        mntmUnblockAll = new JMenuItem("Unblock All");
+        mnNewMenu_3.add(mntmUnblockAll);
 
         GUITitle = new javax.swing.JLabel();
         MessageInputArea = new javax.swing.JTextField();
@@ -128,7 +132,6 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         MessagePanel = new javax.swing.JPanel();
         ChannelLabel = new javax.swing.JLabel();
         ChannelName = new javax.swing.JLabel();
-        ChannelOptionsButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -154,15 +157,8 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
 
         ChannelLabel.setText("Channel:");
 
-        ChannelName.setText("General Chat");
-
-        ChannelOptionsButton.setText("Options");
-        ChannelOptionsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ChannelOptionsButtonActionPerformed(evt);
-            }
-        });
-        
+        ChannelName.setText("public");
+       
         mntmCreate.addActionListener(new java.awt.event.ActionListener(){
         	public void actionPerformed(java.awt.event.ActionEvent evt){
         		CreateChannelOptionSelected(evt);
@@ -180,6 +176,24 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         	}
         });
         
+        mntmBlock.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		BlockUserOptionSelected(evt);
+        	}
+        });
+        
+        mntmUnblockUser.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		UnblockUserOptionSelected(evt);
+        	}
+        });
+        
+        mntmUnblockAll.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		UnblockAllOptionSelected(evt);
+        	}
+        });
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -194,7 +208,7 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(MessageScrollPane)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ChannelOptionsButton))
+                        )
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(GUITitle)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -212,7 +226,6 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
                     .addComponent(ChannelName))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ChannelOptionsButton)
                     .addComponent(MessageScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -251,6 +264,31 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         chan.setVisible(true);
         chan.setAlwaysOnTop(true);
 	}
+    private void BlockUserOptionSelected(ActionEvent evt) {
+  	  BlockUserFrame chan = BlockUserFrame.getInstance(this);
+         Point p = MouseInfo.getPointerInfo().getLocation();
+         int xOffset = (int) p.getX() - 25;
+         int yOffset = (int) p.getY() - 25;
+         chan.setLocation(xOffset, yOffset);
+         chan.setVisible(true);
+         chan.setAlwaysOnTop(true);
+ 	}
+    private void UnblockUserOptionSelected(ActionEvent evt) {
+    	  UnblockUserFrame chan = UnblockUserFrame.getInstance(this);
+           Point p = MouseInfo.getPointerInfo().getLocation();
+           int xOffset = (int) p.getX() - 25;
+           int yOffset = (int) p.getY() - 25;
+           chan.setLocation(xOffset, yOffset);
+           chan.setVisible(true);
+           chan.setAlwaysOnTop(true);
+   	}
+    private void UnblockAllOptionSelected(ActionEvent evt) {
+		try {
+			ch.sendToServer("#unblock");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+ 	}
 
 	private void MessageSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MessageSendButtonActionPerformed
         String text = MessageInputArea.getText();
@@ -266,20 +304,11 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         }
     }//GEN-LAST:event_MessageInputAreaKeyPressed
 
-    private void ChannelOptionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChannelOptionsButtonActionPerformed
-        ChannelFrame chan = ChannelFrame.getInstance(this);
-        Point p = MouseInfo.getPointerInfo().getLocation();
-        int xOffset = (int) p.getX() - 25;
-        int yOffset = (int) p.getY() - 25;
-        chan.setLocation(xOffset, yOffset);
-        chan.setVisible(true);
-        chan.setAlwaysOnTop(true);
-    }//GEN-LAST:event_ChannelOptionsButtonActionPerformed
+   //GEN-LAST:event_ChannelOptionsButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ChannelLabel;
     private javax.swing.JLabel ChannelName;
-    private javax.swing.JButton ChannelOptionsButton;
     private javax.swing.JLabel GUITitle;
     private javax.swing.JTextField MessageInputArea;
     private javax.swing.JPanel MessagePanel;
@@ -301,40 +330,47 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     private JMenuItem mntmUnavailable;
     private JMenuItem mntmCreate;
     private JMenu mnNewMenu_3;
-    private JMenuItem mntmNewMenuItem_1;
-    private JMenuItem mntmNewMenuItem_2;
+    private JMenuItem mntmUnblockUser;
+    private JMenuItem mntmUnblockAll;
     private JMenuItem mntmJoin;
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void update(Observable o, Object arg) {
-        if(arg instanceof serverNotification){
-        	serverNotification sn = (serverNotification) arg;
-        	if(sn.getMessage().equals("LOGIN_FAILED")){
-        		showMessageDialog(this, "Login failed. Please try again.",
-    					"Error", JOptionPane.ERROR_MESSAGE);
-        		java.awt.EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        new LoginGUI().setVisible(true);
-                    }
-                });
-        		setVisible(false);
-        		dispose();
-        	}
-        	else if(sn.getMessage().equals("CONNECTION_FAILED")){
-        		showMessageDialog(this, "Failed to connect to server. Please try again.",
-    					"Error", JOptionPane.ERROR_MESSAGE);
-        		java.awt.EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                    	setVisible(false);
-                		dispose();
-                        new LoginGUI().setVisible(true);
-                    }
-                });
-        		
-        	}
-        }
-    }
+	public void update(Observable o, Object arg) {
+		if (arg instanceof serverNotification) {
+			serverNotification sn = (serverNotification) arg;
+			switch (sn.getMessage()) {
+			case "LOGIN_FAILED":
+				showMessageDialog(this, "Login failed. Please try again.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				java.awt.EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						new LoginGUI().setVisible(true);
+					}
+				});
+				setVisible(false);
+				dispose();
+				break;
+
+			case "CONNECTION_FAILED":
+				showMessageDialog(this,
+						"Failed to connect to server. Please try again.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				java.awt.EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						setVisible(false);
+						dispose();
+						new LoginGUI().setVisible(true);
+					}
+				});
+				break;
+			
+			case "CHANNEL_CHANGED":
+				ChannelName.setText(sn.getInfo());
+				break;
+			}
+		}
+	}
 
     @Override
     public void display(String msg) {

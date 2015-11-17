@@ -56,7 +56,7 @@ public class ChatClient extends ObservableClient {
 			openConnection();
 			sendToServer("#login " + login + " " + password);
 		} catch (IOException e) {
-			serverNotification sn=new serverNotification("CONNECTION_FAILED");
+			serverNotification sn=new serverNotification("CONNECTION_FAILED","");
 			setChanged();
 			notifyObservers(sn);
 			deleteObserver((Observer) clientUI);
@@ -208,45 +208,6 @@ public class ChatClient extends ObservableClient {
 		}
 	}
 
-//	@SuppressWarnings("resource")
-//	private boolean passwordCheck() {
-//		Scanner sc = new Scanner(System.in);
-//		if (password.isEmpty()) {
-//			setPassword();
-//		}
-//		System.out.println("Login: " + id);
-//		System.out.print("Password: ");
-//		String temp = sc.nextLine();
-//		if (temp.equals(password)) {
-//			try {
-//				sendToServer(true);
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			return true;
-//		} else {
-//			System.out.println("ERROR - Invalid login information try again.");
-//			passwordCheck();
-//			return false;
-//		}
-//	}
-//
-//	@SuppressWarnings("resource")
-//	private void setPassword() {
-//		Scanner sc = new Scanner(System.in);
-//		System.out.println("Login: " + id);
-//		System.out.print("Set Password: ");
-//		password = sc.nextLine();
-//		clientUI.display("Password set to: " + password);
-//		try {
-//			sendToServer("#setPassword " + password);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-
 	/**
 	 * This method terminates the client.
 	 */
@@ -267,7 +228,7 @@ public class ChatClient extends ObservableClient {
 	protected void connectionException(Exception exception) {
 		System.out.println("Abnormal termination of connection.");
     setChanged();
-    notifyObservers(new serverNotification("LOGIN_FAILED"));
+    notifyObservers(new serverNotification("LOGIN_FAILED",""));
 	}
 }
 // End of ChatClient class

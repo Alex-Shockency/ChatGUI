@@ -1,4 +1,4 @@
-package gui.channelGUI;
+package gui.blockGUI;
 
 import gui.ClientGUI;
 
@@ -28,21 +28,21 @@ import java.awt.event.KeyEvent;
  *
  * @author joshua
  */
-public class CreateChannelFrame extends javax.swing.JFrame {
-    private static CreateChannelFrame instance = null;
+public class UnblockUserFrame extends javax.swing.JFrame {
+    private static UnblockUserFrame instance = null;
     private static ClientGUI parent;
     private JTextField textField;
     /**
      * Creates new form ChannelFrame
      */
-    private CreateChannelFrame() {
+    private UnblockUserFrame() {
         initComponents();
     }
     
-    public static CreateChannelFrame getInstance(ClientGUI parent){
+    public static UnblockUserFrame getInstance(ClientGUI parent){
         if(instance == null){
-            instance = new CreateChannelFrame();
-            CreateChannelFrame.parent = parent;
+            instance = new UnblockUserFrame();
+            UnblockUserFrame.parent = parent;
         }
         return instance;
     }
@@ -59,7 +59,7 @@ public class CreateChannelFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         
-        JLabel lblNewLabel = new JLabel("Channel Name: ");
+        JLabel lblNewLabel = new JLabel("Username: ");
         getContentPane().add(lblNewLabel);
         
         textField = new JTextField();
@@ -68,7 +68,7 @@ public class CreateChannelFrame extends javax.swing.JFrame {
         	public void keyPressed(KeyEvent e) {
         		if(e.getKeyCode()==KeyEvent.VK_ENTER){
         			try {
-    					parent.ch.sendToServer("#createChannel "+textField.getText());
+    					parent.ch.sendToServer("#unblock "+textField.getText());
     					dispose();
     				} catch (IOException e1) {
     					e1.printStackTrace();
@@ -79,14 +79,14 @@ public class CreateChannelFrame extends javax.swing.JFrame {
         getContentPane().add(textField);
         textField.setColumns(23);
         
-        JButton btnNewButton = new JButton("Create");
+        JButton btnNewButton = new JButton("Unblock");
         btnNewButton.setVerticalAlignment(SwingConstants.BOTTOM);
         getContentPane().add(btnNewButton);
         btnNewButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//attempt to join selected channel
         		try {
-					parent.ch.sendToServer("#createChannel "+textField.getText());
+					parent.ch.sendToServer("#unblock "+textField.getText());
 					dispose();
 				} catch (IOException e1) {
 					e1.printStackTrace();
