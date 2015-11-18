@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import javax.swing.ImageIcon;
+
 import common.ChatIF;
 
 /**
@@ -94,6 +96,11 @@ public class ClientConsole implements ChatIF
   public void display(String message) 
   {
     System.out.println(message);
+  }
+  
+  public void display(ImageIcon image) 
+  {
+    System.out.println("Images not supported");
   }
 
 

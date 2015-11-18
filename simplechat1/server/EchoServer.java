@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+import javax.swing.ImageIcon;
+
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 import ocsf.server.ObservableServer;
@@ -68,6 +70,10 @@ public class EchoServer extends ObservableServer {
 		if (!client.getInfo("status").equals("Unavailable")) {
 			client.setInfo("status", "Online");
 		}
+		if(msg instanceof ImageIcon){
+			sendToAllClients(client,msg);
+		}
+		else{
 			String tempMsg = msg.toString();
 			int msgCount = (int) client.getInfo("Message Count");
 
@@ -80,6 +86,7 @@ public class EchoServer extends ObservableServer {
 				sendToAllClients(client, client.getInfo("loginId") + "> " + tempMsg);
 			}// end else
 			client.setInfo("Message Count", msgCount + 1);
+		}
 		}
 //	}
 

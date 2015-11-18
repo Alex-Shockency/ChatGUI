@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Observer;
 import java.util.Scanner;
 
+import javax.swing.ImageIcon;
+
 import ocsf.client.AbstractClient;
 import ocsf.client.ObservableClient;
 import server.serverNotification;
@@ -78,7 +80,11 @@ public class ChatClient extends ObservableClient {
 			serverNotification sn = (serverNotification) msg;
 			setChanged();
 			notifyObservers(sn);
-		} else {
+		}
+		else if(msg instanceof ImageIcon){
+			clientUI.display((ImageIcon)msg);
+		}
+		else {
 			String message = msg.toString();
 			clientUI.display(message);
 		}
@@ -228,7 +234,7 @@ public class ChatClient extends ObservableClient {
 	protected void connectionException(Exception exception) {
 		System.out.println("Abnormal termination of connection.");
     setChanged();
-    notifyObservers(new serverNotification("LOGIN_FAILED",""));
+    notifyObservers(new serverNotification("CONNECTION_FAILED",""));
 	}
 }
 // End of ChatClient class

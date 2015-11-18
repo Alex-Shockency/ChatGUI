@@ -4,6 +4,8 @@
 
 package common;
 
+import javax.swing.ImageIcon;
+
 /**
  * This interface implements the abstract method used to display
  * objects onto the client or server UIs.
@@ -19,4 +21,10 @@ public interface ChatIF
    * a UI.
    */
   public abstract void display(String message);
+  
+  /**
+   * Method that when overriden is used to display images onto
+   * a UI.
+   */
+  public abstract void display(ImageIcon image);
 }

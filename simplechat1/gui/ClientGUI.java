@@ -7,19 +7,26 @@ import gui.blockGUI.UnblockUserFrame;
 import gui.channelGUI.CreateChannelFrame;
 import gui.channelGUI.JoinChannelFrame;
 import gui.channelGUI.LeaveChannelFrame;
+import gui.paintGUI.ImagePanel;
+import gui.paintGUI.PaintFrame;
 import gui.statusGUI.ChannelStatusFrame;
 import gui.statusGUI.UserStatusFrame;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
@@ -124,6 +131,12 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         
         mntmUnblockAll = new JMenuItem("Unblock All");
         mnNewMenu_3.add(mntmUnblockAll);
+        
+        mnImage = new JMenu("Image");
+        menuBar.add(mnImage);
+        
+        mntmSendImage = new JMenuItem("Send Image");
+        mnImage.add(mntmSendImage);
 
         GUITitle = new javax.swing.JLabel();
         MessageInputArea = new javax.swing.JTextField();
@@ -221,6 +234,11 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         mntmStatusChannel.addActionListener(new java.awt.event.ActionListener(){
         	public void actionPerformed(java.awt.event.ActionEvent evt){
         		StatusChannelOptionSelected(evt);
+        	}
+        });
+        mntmSendImage.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		SendImageOptionSelected(evt);
         	}
         });
         
@@ -367,6 +385,10 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         chan.setVisible(true);
         chan.setAlwaysOnTop(true);
  	}
+    private void SendImageOptionSelected(ActionEvent evt) {
+    	PaintFrame paint=new PaintFrame(this);
+    	
+ 	}
 
 	private void MessageSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MessageSendButtonActionPerformed
         String text = MessageInputArea.getText();
@@ -410,6 +432,8 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     private JMenuItem mntmUnblockUser;
     private JMenuItem mntmUnblockAll;
     private JMenuItem mntmJoin;
+    private JMenu mnImage;
+    private JMenuItem mntmSendImage;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -474,5 +498,28 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
             Rectangle rect = new Rectangle(0,height,10,10);
             MessagePanel.scrollRectToVisible(rect);
         }catch(Exception e){}
+    }
+    
+    @Override
+    public void display(ImageIcon image){
+    	System.out.println("working");
+    	JFrame frame = new JFrame();
+    	
+    	BufferedImage bf = new BufferedImage(
+    			image.getIconWidth(),
+    			image.getIconHeight(),
+    			BufferedImage.TYPE_INT_ARGB);
+    	Graphics2D graphics = bf.createGraphics();
+    	image.paintIcon(null, graphics, 0, 0);
+    	graphics.dispose();
+    	
+    	ImagePanel panel = new ImagePanel(bf);
+    	
+    	frame.setSize(bf.getWidth(), bf.getHeight());
+    	frame.add(panel);
+    	frame.setLocationRelativeTo(this);
+    	frame.setVisible(true);
+    	
+    	
     }
 }

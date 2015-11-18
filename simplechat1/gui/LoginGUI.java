@@ -1,11 +1,9 @@
 package gui;
 
 
-import java.util.Arrays;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
+
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,6 +18,10 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class LoginGUI extends javax.swing.JFrame {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8816145835056157000L;
+	/**
      * Creates new form LoginGUI
      */
     public LoginGUI() {
