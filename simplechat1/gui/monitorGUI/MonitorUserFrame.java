@@ -57,7 +57,7 @@ public class MonitorUserFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-    	 setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    	setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         
         JLabel lblNewLabel = new JLabel("Username: ");
@@ -70,6 +70,7 @@ public class MonitorUserFrame extends javax.swing.JFrame {
         		if(e.getKeyCode()==KeyEvent.VK_ENTER){
         			try {
     					parent.ch.sendToServer("#monitor "+textField.getText());
+    					instance = null;
     					dispose();
     				} catch (IOException e1) {
     					e1.printStackTrace();
@@ -87,6 +88,7 @@ public class MonitorUserFrame extends javax.swing.JFrame {
         		//attempt to join selected channel
         		try {
 					parent.ch.sendToServer("#monitor "+textField.getText());
+					instance = null;
 					dispose();
 				} catch (IOException e1) {
 					e1.printStackTrace();

@@ -159,9 +159,11 @@ public class EchoServer extends ObservableServer {
 			if (msgCount == 0) {
 				String [] loginInfo=message.split(" ",3);
 				client.setInfo("loginId",loginInfo[1]);
+				if(!blockLists.containsKey(client.getInfo("loginId"))){
 				//Initialize blockList of client to empty list.
 				ArrayList<String> tempList=new ArrayList<String>();
 				blockLists.put((String) client.getInfo("loginId"),tempList);
+				}
 				passwordCheck(client,loginInfo[2]);
 				if (!validUsers.contains(client.getInfo("loginId"))) {
 					validUsers.add((String) client.getInfo("loginId"));
@@ -333,8 +335,13 @@ public class EchoServer extends ObservableServer {
 		case "block":
 			if(validUsers.contains(argument)){
 				if(!argument.equals(client.getInfo("loginId"))){
-				blockLists.get(client.getInfo("loginId")).add(argument);
-				sendToClient(client,"Messages from "+argument+" are now being blocked.");
+					if(!blockLists.get(client.getInfo("loginId")).contains(argument)){
+						blockLists.get(client.getInfo("loginId")).add(argument);
+						sendToClient(client,"Messages from "+argument+" are now being blocked.");
+					}
+					else{
+						sendToClient(client,"You are already blocking "+argument);
+					}
 				}
 				else
 					sendToClient(client,"ERROR - You cannot block yourself.");

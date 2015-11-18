@@ -70,6 +70,7 @@ public class JoinChannelFrame extends javax.swing.JFrame {
         		if(e.getKeyCode()==KeyEvent.VK_ENTER){
         			try {
     					parent.ch.sendToServer("#joinChannel "+textField.getText());
+    					instance = null;
     					dispose();
     				} catch (IOException e1) {
     					e1.printStackTrace();
@@ -87,6 +88,7 @@ public class JoinChannelFrame extends javax.swing.JFrame {
         		//attempt to join selected channel
         		try {
 					parent.ch.sendToServer("#joinChannel "+textField.getText());
+					instance = null;
 					dispose();
 				} catch (IOException e1) {
 					e1.printStackTrace();

@@ -551,7 +551,6 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     
     @Override
     public void display(ImageIcon image){
-    	System.out.println("working");
     	JFrame frame = new JFrame();
     	
     	BufferedImage bf = new BufferedImage(
