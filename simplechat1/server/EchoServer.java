@@ -343,25 +343,39 @@ public class EchoServer extends ObservableServer {
 				sendToClient(client,"ERROR - User does not exist.");
 			break;
 		case "unblock":
+			ArrayList <String> clientBlockList=blockLists.get(client.getInfo("loginId"));
 			if(argument.isEmpty())
 			{
-				ArrayList <String> clientBlockList=blockLists.get(client.getInfo("loginId"));
+				if(clientBlockList.isEmpty()){
+					sendToClient(client,"You are not blocking anyone.");
+				}
+				else{
 				for(int i=0;i<clientBlockList.size();i++)
 				{
 					sendToClient(client,"Messages from "+clientBlockList.get(i)+" will now be displayed");
 				}
 				clientBlockList.clear();
+				}
 			}
 			else{
+				if(clientBlockList.contains(argument)){
 				blockLists.get(client.getInfo("loginId")).remove(argument);
 				sendToClient(client,argument+" has been unblocked.");
+				}
+				else{
+					sendToClient(client,"You are not blocking "+argument+" currently.");
+				}
 			}
 			break;
 		case "whoiblock":
-			ArrayList <String> clientBlockList=blockLists.get(client.getInfo("loginId"));
-			for(int i=0;i<clientBlockList.size();i++)
-			{
-				sendToClient(client,clientBlockList.get(i));
+			clientBlockList = blockLists.get(client.getInfo("loginId"));
+			if (clientBlockList.isEmpty()) {
+				sendToClient(client, "You are not blocking anyone.");
+			} else {
+				sendToClient(client, "You are blocking:");
+				for (int i = 0; i < clientBlockList.size(); i++) {
+					sendToClient(client, clientBlockList.get(i));
+				}
 			}
 			break;
 		case "whoblocksme":
@@ -387,6 +401,7 @@ public class EchoServer extends ObservableServer {
 		case "logoff":
 			try {
 				client.setInfo("status", "Offline");
+				client.setInfo("whoimonitor",null);
 				sendToAllClients(client,client.getInfo("loginId")+" has logged off");
 				client.close();
 			} catch (IOException e1) {
@@ -481,8 +496,22 @@ public class EchoServer extends ObservableServer {
 			}
 			break;
 		case "monitor":
+			if(validUsers.contains(argument)){
 			client.setInfo("whoimonitor", argument);
 			sendToClient(client, "You are now monitoring " + argument + ".");
+			}
+			else{
+				sendToClient(client,"ERROR - User does not exist.");
+			}
+			break;
+		case "unmonitor":
+			if(validUsers.contains(argument)){
+			client.setInfo("whoimonitor", argument);
+			sendToClient(client, "You are now monitoring " + argument + ".");
+			}
+			else{
+				sendToClient(client,"ERROR - User does not exist.");
+			}
 			break;
 		default:
 

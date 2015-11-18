@@ -1,19 +1,7 @@
 package gui;
 import static javax.swing.JOptionPane.showMessageDialog;
-import client.ChatClient;
-import common.ChatIF;
-import gui.blockGUI.BlockUserFrame;
-import gui.blockGUI.UnblockUserFrame;
-import gui.channelGUI.CreateChannelFrame;
-import gui.channelGUI.JoinChannelFrame;
-import gui.channelGUI.LeaveChannelFrame;
-import gui.paintGUI.ImagePanel;
-import gui.paintGUI.PaintFrame;
-import gui.statusGUI.ChannelStatusFrame;
-import gui.statusGUI.UserStatusFrame;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -28,17 +16,24 @@ import java.util.Observer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
-import javax.swing.UIManager;
-import javax.swing.text.DefaultCaret;
-
-import server.serverNotification;
-
-import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
+import client.ChatClient;
+import common.ChatIF;
+import gui.blockGUI.BlockUserFrame;
+import gui.blockGUI.UnblockUserFrame;
+import gui.channelGUI.CreateChannelFrame;
+import gui.channelGUI.JoinChannelFrame;
+import gui.monitorGUI.MonitorUserFrame;
+import gui.paintGUI.ImagePanel;
+import gui.paintGUI.PaintFrame;
+import gui.statusGUI.ChannelStatusFrame;
+import gui.statusGUI.UserStatusFrame;
+import server.serverNotification;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -48,7 +43,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author joshua
+ * @author Joshua Fuller,Alex Shockency
  */
 public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     public ChatClient ch;
@@ -132,11 +127,23 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         mntmUnblockAll = new JMenuItem("Unblock All");
         mnNewMenu_3.add(mntmUnblockAll);
         
+        mntmWhoBlocksMe = new JMenuItem("Who Blocks Me");
+        mnBlocking.add(mntmWhoBlocksMe);
+        
+        mntmWhoIBlock = new JMenuItem("Who I Block");
+        mnBlocking.add(mntmWhoIBlock);
+        
         mnImage = new JMenu("Image");
         menuBar.add(mnImage);
         
         mntmSendImage = new JMenuItem("Send Image");
         mnImage.add(mntmSendImage);
+        
+        mnMonitor = new JMenu("Monitor");
+        menuBar.add(mnMonitor);
+        
+        mntmMonitorUser = new JMenuItem("User");
+        mnMonitor.add(mntmMonitorUser);
 
         GUITitle = new javax.swing.JLabel();
         MessageInputArea = new javax.swing.JTextField();
@@ -241,6 +248,21 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         		SendImageOptionSelected(evt);
         	}
         });
+        mntmWhoBlocksMe.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		WhoBlocksMeOptionSelected(evt);
+        	}
+        });
+        mntmWhoIBlock.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		WhoIBlockOptionSelected(evt);
+        	}
+        });
+        mntmMonitorUser.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		MonitorUserOptionSelected(evt);
+        	}
+        });
         
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -304,13 +326,12 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         chan.setAlwaysOnTop(true);
 	}
     private void LeaveChannelOptionSelected(ActionEvent evt) {
- 	   LeaveChannelFrame chan = LeaveChannelFrame.getInstance(this);
-        Point p = MouseInfo.getPointerInfo().getLocation();
-        int xOffset = (int) p.getX() - 25;
-        int yOffset = (int) p.getY() - 25;
-        chan.setLocation(xOffset, yOffset);
-        chan.setVisible(true);
-        chan.setAlwaysOnTop(true);
+ 	   try {
+		ch.sendToServer("#leaveChannel");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	}
     private void BlockUserOptionSelected(ActionEvent evt) {
   	  BlockUserFrame chan = BlockUserFrame.getInstance(this);
@@ -387,7 +408,31 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
  	}
     private void SendImageOptionSelected(ActionEvent evt) {
     	PaintFrame paint=new PaintFrame(this);
-    	
+ 	}
+    private void WhoBlocksMeOptionSelected(ActionEvent evt) {
+    	try {
+			ch.sendToServer("#whoblocksme");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 	}
+    private void WhoIBlockOptionSelected(ActionEvent evt) {
+    	try {
+			ch.sendToServer("#whoiblock");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 	}
+    private void MonitorUserOptionSelected(ActionEvent evt) {
+    	MonitorUserFrame chan = MonitorUserFrame.getInstance(this);
+        Point p = MouseInfo.getPointerInfo().getLocation();
+        int xOffset = (int) p.getX() - 25;
+        int yOffset = (int) p.getY() - 25;
+        chan.setLocation(xOffset, yOffset);
+        chan.setVisible(true);
+        chan.setAlwaysOnTop(true);
  	}
 
 	private void MessageSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MessageSendButtonActionPerformed
@@ -434,6 +479,10 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     private JMenuItem mntmJoin;
     private JMenu mnImage;
     private JMenuItem mntmSendImage;
+    private JMenuItem mntmWhoBlocksMe;
+    private JMenuItem mntmWhoIBlock;
+    private JMenu mnMonitor;
+    private JMenuItem mntmMonitorUser;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -516,7 +565,7 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     	ImagePanel panel = new ImagePanel(bf);
     	
     	frame.setSize(bf.getWidth(), bf.getHeight());
-    	frame.add(panel);
+    	frame.getContentPane().add(panel);
     	frame.setLocationRelativeTo(this);
     	frame.setVisible(true);
     	

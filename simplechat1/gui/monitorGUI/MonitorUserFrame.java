@@ -1,4 +1,4 @@
-package gui.channelGUI;
+package gui.monitorGUI;
 
 import gui.ClientGUI;
 
@@ -10,11 +10,12 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.SwingConstants;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -28,21 +29,21 @@ import java.awt.event.KeyEvent;
  *
  * @author joshua
  */
-public class LeaveChannelFrame extends javax.swing.JFrame {
-    private static LeaveChannelFrame instance = null;
+public class MonitorUserFrame extends javax.swing.JFrame {
+    private static MonitorUserFrame instance = null;
     private static ClientGUI parent;
     private JTextField textField;
     /**
      * Creates new form ChannelFrame
      */
-    private LeaveChannelFrame() {
+    private MonitorUserFrame() {
         initComponents();
     }
     
-    public static LeaveChannelFrame getInstance(ClientGUI parent){
+    public static MonitorUserFrame getInstance(ClientGUI parent){
         if(instance == null){
-            instance = new LeaveChannelFrame();
-            LeaveChannelFrame.parent = parent;
+            instance = new MonitorUserFrame();
+            MonitorUserFrame.parent = parent;
         }
         return instance;
     }
@@ -59,7 +60,7 @@ public class LeaveChannelFrame extends javax.swing.JFrame {
     	 setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         
-        JLabel lblNewLabel = new JLabel("Channel Name: ");
+        JLabel lblNewLabel = new JLabel("Username: ");
         getContentPane().add(lblNewLabel);
         
         textField = new JTextField();
@@ -68,7 +69,7 @@ public class LeaveChannelFrame extends javax.swing.JFrame {
         	public void keyPressed(KeyEvent e) {
         		if(e.getKeyCode()==KeyEvent.VK_ENTER){
         			try {
-    					parent.ch.sendToServer("#leaveChannel "+textField.getText());
+    					parent.ch.sendToServer("#monitor "+textField.getText());
     					dispose();
     				} catch (IOException e1) {
     					e1.printStackTrace();
@@ -79,30 +80,30 @@ public class LeaveChannelFrame extends javax.swing.JFrame {
         getContentPane().add(textField);
         textField.setColumns(23);
         
-        JButton btnNewButton = new JButton("Leave");
-        btnNewButton.setVerticalAlignment(SwingConstants.BOTTOM);
-        getContentPane().add(btnNewButton);
         
+        JButton btnNewButton = new JButton("Submit");
         btnNewButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//attempt to join selected channel
         		try {
-					parent.ch.sendToServer("#leaveChannel "+textField.getText());
+					parent.ch.sendToServer("#monitor "+textField.getText());
 					dispose();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
         	}
         });
+        btnNewButton.setVerticalAlignment(SwingConstants.BOTTOM);
+        getContentPane().add(btnNewButton);
         
         JButton btnNewButton_1 = new JButton("Cancel");
-        btnNewButton_1.setVerticalAlignment(SwingConstants.BOTTOM);
-        getContentPane().add(btnNewButton_1);
         btnNewButton_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		dispose();
         	}
         });
+        btnNewButton_1.setVerticalAlignment(SwingConstants.BOTTOM);
+        getContentPane().add(btnNewButton_1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
