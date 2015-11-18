@@ -6,11 +6,13 @@ import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -23,13 +25,13 @@ public class PaintFrame extends JFrame{
    */
   private static final long serialVersionUID = 1433710136495154587L;
   private PaintPanel paint;
-  private JFrame parent;
+  private ClientGUI parent;
   
   public Image getImage(){
     return paint.getImage();
   }
   
-  public PaintFrame(JFrame parent) {
+  public PaintFrame(final ClientGUI parent) {
     super();
     try{
       UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -64,6 +66,9 @@ public class PaintFrame extends JFrame{
 
     });
     this.add(slide);
+    
+    JPanel buttonGroup = new JPanel();
+    buttonGroup.setLayout(new BoxLayout(buttonGroup,BoxLayout.X_AXIS));
     JButton clearButton = new JButton("Clear");
     clearButton.addActionListener(new ActionListener(){
 
@@ -74,7 +79,24 @@ public class PaintFrame extends JFrame{
 		}
     	
     });
-    this.add(clearButton);
+    buttonGroup.add(clearButton);
+    JButton sendButton = new JButton("Send");
+    sendButton.addActionListener(new ActionListener(){
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				parent.ch.sendToServer(paint.getImage());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+		}
+    	
+    });
+    buttonGroup.add(sendButton);
+    this.add(buttonGroup);
     this.pack();
     this.setLocationRelativeTo(null);
     this.setVisible(true);
