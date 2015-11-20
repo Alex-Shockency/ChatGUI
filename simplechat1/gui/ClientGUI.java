@@ -419,9 +419,7 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         chan.setAlwaysOnTop(true);
  	}
     private void SendImageOptionSelected(ActionEvent evt) {
-    	if(paint == null){
     		paint = new OpenDrawPad(ch,this);
-    	}
  	}
     private void WhoBlocksMeOptionSelected(ActionEvent evt) {
     	try {
