@@ -81,12 +81,14 @@ public class ChatClient extends ObservableClient {
 			setChanged();
 			notifyObservers(sn);
 		}
-		else if(msg instanceof ImageIcon){
-			clientUI.display((ImageIcon)msg);
-		}
 		else {
-			String message = msg.toString();
-			clientUI.display(message);
+			if(msg.toString().startsWith("#linedraw")){
+				setChanged();
+				notifyObservers(msg);
+			}else{
+				String message = msg.toString();
+				clientUI.display(message);	
+			}
 		}
 	}
 

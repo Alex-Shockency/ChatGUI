@@ -3,6 +3,10 @@ package gui;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
 
 /*
@@ -42,11 +46,43 @@ public class LoginGUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
+        jTextField1.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER){
+    					send();
+        		}
+			}
+		});
         jPasswordField1 = new javax.swing.JPasswordField();
+        jPasswordField1.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER){
+    					send();
+        		}
+			}
+		});
         jLabel3 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
+        jTextField2.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER){
+    					send();
+        		}
+			}
+		});
         jLabel4 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
+        jTextField3.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER){
+    					send();
+        		}
+			}
+		});
         jButton1 = new javax.swing.JButton();
         Register = new javax.swing.JButton();
 
@@ -152,7 +188,11 @@ public class LoginGUI extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 		//System.out.println(((JButton)evt.getSource()).getActionListeners().length);
     	// TODO add your handling code here:
-		String Username = jTextField1.getText();
+		send();
+    }//GEN-LAST:event_jButton1ActionPerformed
+    
+    void send(){
+    	String Username = jTextField1.getText();
 		char[] Password = jPasswordField1.getPassword();
 		String Host;
 		int Port;
@@ -182,7 +222,7 @@ public class LoginGUI extends javax.swing.JFrame {
 			}
 		});
 		dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }
 
     private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
         // TODO add your handling code here:
@@ -236,4 +276,6 @@ public class LoginGUI extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
+    
+	
 }

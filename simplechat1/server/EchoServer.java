@@ -149,7 +149,6 @@ public class EchoServer extends ObservableServer {
 			}// end for
 			client.sendToClient(message);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -214,22 +213,42 @@ public class EchoServer extends ObservableServer {
 		}
 	}
 
-	private void privateMessage(ConnectionToClient client, String clientToPM, String message) {
-		for (Thread currentUserThread : getClientConnections()) {
-			//client info for current thread
-			ConnectionToClient currentClient = ((ConnectionToClient) currentUserThread);
-			if (currentClient.getInfo("loginId").equals(clientToPM)) {
-				if(!currentClient.getInfo("status").equals("Unavailable")&&!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))){
-					if (clientToPM.equals(client.getInfo("loginId"))) {
-					sendToClient(client,"ERROR - You cannot private message yourself.");
-					} else if (!((ConnectionToClient) currentUserThread).getInfo("status").equals("Unavailable")) {
-					sendToClient(currentClient, "(PRIVATE MSG) "+client.getInfo("loginId") + "> " + message);
-					} else
-					sendToClient(client, "ERROR - " + currentClient.getInfo("loginId") + " is not available.");
+	private void privateMessage(ConnectionToClient client, String clientToPM,
+			String message) {
+		if (!validUsers.contains(clientToPM)) {
+			sendToClient(client, "ERROR - User does not exist.");
+		} else {
+			for (Thread currentUserThread : getClientConnections()) {
+				// client info for current thread
+				ConnectionToClient currentClient = ((ConnectionToClient) currentUserThread);
+				if (currentClient.getInfo("loginId").equals(clientToPM)) {
+					if (!currentClient.getInfo("status").equals("Unavailable")
+							&& !blockLists
+									.get(currentClient.getInfo("loginId"))
+									.contains(client.getInfo("loginId"))) {
+						if (clientToPM.equals(client.getInfo("loginId"))) {
+							sendToClient(client,
+									"ERROR - You cannot private message yourself.");
+							return;
+						} else if (!currentClient.getInfo("status").equals(
+								"Offline")) {
+							sendToClient(currentClient, "(PRIVATE MSG) "
+									+ client.getInfo("loginId") + "> "
+									+ message);
+							return;
+						} else{
+							sendToClient(
+									client,
+									"ERROR - "
+											+ currentClient.getInfo("loginId")
+											+ " is not available.");
+						return;
+						}
+					}
 				}
 			}
+			sendToClient(client, "ERROR - User is offline.");
 		}
-			
 	}
 
 	private void status(String user, ConnectionToClient client) {
@@ -289,7 +308,6 @@ public class EchoServer extends ObservableServer {
 						}
 						return;
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -323,6 +341,10 @@ public class EchoServer extends ObservableServer {
 	}
 
 	private void handleClientCommand(ConnectionToClient client, String command) {
+		if(command.startsWith("#linedraw")){
+			sendToAllClients(client,command);
+			return;
+		}
 		// parse command
 		int endOfCommand = command.length();
 		String argument = "";
@@ -412,7 +434,6 @@ public class EchoServer extends ObservableServer {
 				sendToAllClients(client,client.getInfo("loginId")+" has logged off");
 				client.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			break;
