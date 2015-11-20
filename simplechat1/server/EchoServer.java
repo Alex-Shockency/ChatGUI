@@ -141,7 +141,7 @@ public class EchoServer extends ObservableServer {
 					//if someone is monitoring somebody forward the message from that user.
 					if (currentClient.getInfo("whoimonitor").equals(client.getInfo("loginId"))) {
 						//if they are not blocked then forward.
-						if (!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))) {
+						if (!blockLists.get(currentClient.getInfo("loginId")).contains(client.getInfo("loginId"))&&!message.toString().startsWith("#linedraw")) {
 								currentClient.sendToClient("(monitored from "+ client.getInfo("loginId")+ ") "+ message );
 							}
 					}
@@ -524,7 +524,10 @@ public class EchoServer extends ObservableServer {
 			}
 			break;
 		case "monitor":
-			if(validUsers.contains(argument)){
+			if(client.getInfo("loginId").equals(argument)){
+				sendToClient(client,"ERROR - You cannot monitor yourself.");
+			}
+			else if(validUsers.contains(argument)){
 			client.setInfo("whoimonitor", argument);
 			sendToClient(client, "You are now monitoring " + argument + ".");
 			}
@@ -533,13 +536,8 @@ public class EchoServer extends ObservableServer {
 			}
 			break;
 		case "unmonitor":
-			if(validUsers.contains(argument)){
-			client.setInfo("whoimonitor", argument);
-			sendToClient(client, "You are now monitoring " + argument + ".");
-			}
-			else{
-				sendToClient(client,"ERROR - User does not exist.");
-			}
+			client.setInfo("whoimonitor", null);
+			sendToClient(client,"You are not monitoring anyone.");
 			break;
 		default:
 

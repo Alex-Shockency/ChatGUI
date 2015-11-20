@@ -150,6 +150,9 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         mntmMonitorUser = new JMenuItem("User");
         mnMonitor.add(mntmMonitorUser);
         
+        mntmUnmonitor = new JMenuItem("Unmonitor");
+        mnMonitor.add(mntmUnmonitor);
+        
         mntmPm = new JMenuItem("PM");
         menuBar.add(mntmPm);
 
@@ -274,6 +277,11 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         mntmPm.addActionListener(new java.awt.event.ActionListener(){
         	public void actionPerformed(java.awt.event.ActionEvent evt){
         		PmOptionSelected(evt);
+        	}
+        });
+        mntmUnmonitor.addActionListener(new java.awt.event.ActionListener(){
+        	public void actionPerformed(java.awt.event.ActionEvent evt){
+        		UnmonitorOptionSelected(evt);
         	}
         });
         
@@ -453,6 +461,14 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
         chan.setVisible(true);
         chan.setAlwaysOnTop(true);
  	}
+    private void UnmonitorOptionSelected(ActionEvent evt) {
+    	try {
+			ch.sendToServer("#unmonitor");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 	}
 
 	private void MessageSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MessageSendButtonActionPerformed
         String text = MessageInputArea.getText();
@@ -503,6 +519,7 @@ public class ClientGUI extends javax.swing.JFrame implements Observer, ChatIF{
     private JMenu mnMonitor;
     private JMenuItem mntmMonitorUser;
     private JMenuItem mntmPm;
+    private JMenuItem mntmUnmonitor;
     // End of variables declaration//GEN-END:variables
 
 	@Override
