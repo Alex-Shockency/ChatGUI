@@ -114,8 +114,8 @@
     },
     {
       "question": "Erina pendleton thought her first kiss would be with Jonathan but instead,",
-      "correct": "'It was me, DIO!",
-      "incorrect1": "'It was me, Zeppeli!",
+      "correct": "'It was me, DIO!'",
+      "incorrect1": "'It was me, Zeppeli!'",
       "incorrect2": "'It was me, Jotaro!'",
       "incorrect3": "'It was me, Cars!'"
     },
@@ -146,6 +146,216 @@
       "incorrect1": "4-point star",
       "incorrect2": "The letter 'J'",
       "incorrect3": "6-point star"
+    },
+    {
+      "question": "What iconic accessory does Hestia wear in hit anime series Dungeon ni Deai wo Motomeru no wa Machigatteiru Barou ka",
+      "correct": "Blue ribbon",
+      "incorrect1": "Purple shoulderplates",
+      "incorrect2": "Elucidator",
+      "incorrect3": "Pokemon"
+    },
+    {
+      "question": "Who is One Punch Man's sidekick",
+      "correct": "A cyborg",
+      "incorrect1": "Two Punch Man",
+      "incorrect2": "Three Punch Man",
+      "incorrect3": "2 cyborgs"
+    },
+    {
+      "question": "In Cute High Earth Defense Club Love, what species does the alien helping the Cute High Earth Defense Club resemble?",
+      "correct": "A koala",
+      "incorrect1": "A hedgehog",
+      "incorrect2": "A fish",
+      "incorrect3": "A cute boy"
+    },
+    {
+      "question": "In Koroku no Basket, what basketball move does Koroku use to defeat Yamata",
+      "correct": "The vanishing shot",
+      "incorrect1": "The vanishing pass",
+      "incorrect2": "Maximumero overoodriiiiive",
+      "incorrect3": "Boostooo"
+    },
+    {
+      "question": "What is Pokemans",
+      "correct": "An anime",
+      "incorrect1": "Not an anime",
+      "incorrect2": "A brand of decorative hedge ornaments",
+      "incorrect3": "Alex Shockency's nickname in high school"
+    },
+    {
+      "question": "Where is anime from",
+      "correct": "Nippon",
+      "incorrect1": "Japan",
+      "incorrect2": "Germany",
+      "incorrect3": "Filthy America"
+    },
+    {
+      "question": "How many evil ex-boyfriends does Ramona Flowers have in the Scott Pilgrim series",
+      "correct": "6",
+      "incorrect1": "7",
+      "incorrect2": "8",
+      "incorrect3": "5"
+    },
+    {
+      "question": "All four nations lived in harmony until the _____ nation attacked",
+      "correct": "Fire",
+      "incorrect1": "Earth",
+      "incorrect2": "Water",
+      "incorrect3": "Air"
+    },
+    {
+      "question": "In Deathu no Notu, what does kira do after taking the potato chip?",
+      "correct": "He eats it",
+      "incorrect1": "He discards it",
+      "incorrect2": "He writes its name in the Death Note",
+      "incorrect3": "He doesn't eat it"
+    },
+    {
+      "question": "In Pepe no Monogatori, why does Pepe run away from home?",
+      "correct": "He didn't get his tendies",
+      "incorrect1": "He eloped with a girl",
+      "incorrect2": "He got a job and moved out",
+      "incorrect3": "He doesn't run away from home"
+    },
+    {
+      "question": "In Cutie Cute High School Girl FunTimes Cutie Cutes (How Can They Be This Cute?), what is the name of the Cutie Cute girl with green hair?",
+      "correct": "Cutie Cute Crystal Genesis Y Ultimate",
+      "incorrect1": "Cutie Cute Purple",
+      "incorrect2": "Cutie Cute Omega X",
+      "incorrect3": "Cutie Cute Green"
+    },
+    {
+      "question": "In Fire Emblem, what is the major weakness of flying units?",
+      "correct": "Wind magic and archers",
+      "incorrect1": "Dragon units and Fire magic",
+      "incorrect2": "Arcane magic and Burrowers",
+      "incorrect3": "Walls and tall trees"
+    },
+    {
+      "question": "In the Pheonix Wright series, what profession is Pheonix Wright?",
+      "correct": "Defense Attourney",
+      "incorrect1": "Plumber",
+      "incorrect2": "Witcher",
+      "incorrect3": "Prosciutto"
+    },
+    {
+      "question": "In Dark Souls, which character wants the Chosen Undead to bring about the Age of Humanity?",
+      "correct": "Kaathe",
+      "incorrect1": "Gwyn",
+      "incorrect2": "Smough",
+      "incorrect3": "Prosciutto"
+    },
+    {
+      "question": "In Pokemon, what does Brock change his frying pan into?",
+      "correct": "A drying pan",
+      "incorrect1": "A pokemon",
+      "incorrect2": "Ash Ketchum",
+      "incorrect3": "Satoshi"
+    },
+    {
+      "question": "In Pokemon, what was Ash Ketchum's original name before it was tainted by being dubbed into English?",
+      "correct": "Satoshi",
+      "incorrect1": "A pokemon",
+      "incorrect2": "Ash Ketchum",
+      "incorrect3": "Ash Ketchup"
+    },
+    {
+      "question": "Who isn't cool enough to believe anime is real life?",
+      "correct": "Alex Shockency",
+      "incorrect1": "Josh Fuller",
+      "incorrect2": "Shigiru Miyamoto",
+      "incorrect3": "Konata Izumi"
+    },
+    {
+      "question": "Who is Josh Fuller's waifu?",
+      "correct": "Konata Izumi",
+      "incorrect1": "Taiga Aisaka",
+      "incorrect2": "Jonathan Jostar",
+      "incorrect3": "Ross McConnel"
+    },
+    {
+      "question": "Who is Alex Shockency's waifu",
+      "correct": "Alex Shockency does not have a waifu",
+      "incorrect1": "Josh Fuller",
+      "incorrect2": "Tiger Woods",
+      "incorrect3": "Corey in the House"
+    },
+    {
+      "question": "Who is a busta'?",
+      "correct": "Corey in the House",
+      "incorrect1": "Anime",
+      "incorrect2": "Manga",
+      "incorrect3": "Video games"
+    },
+    {
+      "question": "In Undertale, what is the name of the first character you encounter?",
+      "correct": "Flowey the Flower",
+      "incorrect1": "Sans",
+      "incorrect2": "Papyrus",
+      "incorrect3": "Asgore"
+    },
+    {
+      "question": "What tool does guy 2 use in dig champs?",
+      "correct": "A pickaxe",
+      "incorrect1": "A shovel",
+      "incorrect2": "A drill",
+      "incorrect3": "A knife"
+    },
+    {
+      "question": "What is the name of Meat Boy's girlfriend in Super Meat Boy?",
+      "correct": "Bandage Girl",
+      "incorrect1": "Meat Girl",
+      "incorrect2": "Meat Boy",
+      "incorrect3": "Meat Man"
+    },
+    {
+      "question": "What is the name of Meat Boy's nemesis in Super Meat Boy?",
+      "correct": "Dr. Fetus",
+      "incorrect1": "Vegetarian Man",
+      "incorrect2": "Meat Girl",
+      "incorrect3": "Dr. Horrible"
+    },
+    {
+      "question": "What is the name of Squidward's nemesis in the anime Spongebob Squarepants?",
+      "correct": "Squilliam Fancyson",
+      "incorrect1": "His clarinet",
+      "incorrect2": "His nose",
+      "incorrect3": "Fine dining"
+    },
+    {
+      "question": "In hit anime series Harry Potter, what is the shape of the scar on Harry Potter's forehead?",
+      "correct": "Lightning bolt",
+      "incorrect1": "Pickles the kitten",
+      "incorrect2": "Emma Watson",
+      "incorrect3": "flaming skull with, like, snakes all over"
+    },
+    {
+      "question": "In anime Yona of the Dawn, what is Yona's name?",
+      "correct": "Yona",
+      "incorrect1": "Bona",
+      "incorrect2": "Flona",
+      "incorrect3": "Zona"
+    },
+    {
+      "question": "In Monthly Girl Nozeki-kun, what is the main character's iconic headwear?",
+      "correct": "Polka dot bow",
+      "incorrect1": "Flaming skull with, like, snakes all over",
+      "incorrect2": "Helm of death",
+      "incorrect3": "Cat ears"
+    },
+    {
+      "question": "What does CS stand for?",
+      "correct": "Computer Science",
+      "incorrect1": "Counter Strike",
+      "incorrect2": "Cowden Syndrome",
+      "incorrect3": "Congregation of the Missionaries of St. Charles"
+    },
+    {
+      "question": "What symbol is used in binary?",
+      "correct": "0",
+      "incorrect1": "2",
+      "incorrect2": "A",
+      "incorrect3": ":)"
     }
   ]
 }
