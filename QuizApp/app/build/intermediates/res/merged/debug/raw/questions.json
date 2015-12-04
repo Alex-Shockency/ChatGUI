@@ -1,0 +1,151 @@
+{
+  "questions": [
+    {
+      "question": "What is the airspeed velocity of an unladen swallow?",
+      "correct": "African or European?",
+      "incorrect1": "10 MPH",
+      "incorrect2": "20 MPH",
+      "incorrect3": "30 KM/H"
+    },
+    {
+      "question": "How many licks does it take to get to the tootsie roll center of a tootsie pop?",
+      "correct": "The world may never know",
+      "incorrect1": "1",
+      "incorrect2": "2",
+      "incorrect3": "3"
+    },
+    {
+      "question": "How you doin'?",
+      "correct": "Aight",
+      "incorrect1": "What?",
+      "incorrect2": "Back off",
+      "incorrect3": "Not aight"
+    },
+    {
+      "question": "How many questions are in this quiz?",
+      "correct": "10",
+      "incorrect1": "1",
+      "incorrect2": "100",
+      "incorrect3": "As many as you believe there are"
+    },
+    {
+      "question": "What is in my pocket?",
+      "correct": "A pencil",
+      "incorrect1": "The One Ring",
+      "incorrect2": "A bag of crisps",
+      "incorrect3": "Nothing"
+    },
+    {
+      "question": "What language is my question database written in?",
+      "correct": "JSON",
+      "incorrect1": "How should I know?",
+      "incorrect2": "Lisp",
+      "incorrect3": "Magic"
+    },
+    {
+      "question": "Can I have your number?",
+      "correct": "Yes",
+      "incorrect1": "No",
+      "incorrect2": "No",
+      "incorrect3": "No"
+    },
+    {
+      "question": "What is the greatest movie of all time?",
+      "correct": "The Shawshank Redemption",
+      "incorrect1": "Cheetah Girls",
+      "incorrect2": "Care Bear Journey to Care-a-Lot",
+      "incorrect3": "Birdemic"
+    },
+    {
+      "question": "Which answer will you choose?",
+      "correct": "The correct one",
+      "incorrect1": "An incorrect one",
+      "incorrect2": "A different incorrect one",
+      "incorrect3": "The one pretending to be correct"
+    },
+    {
+      "question": "Who is tired of writing questions?",
+      "correct": "Josh",
+      "incorrect1": "The NSA",
+      "incorrect2": "Santa Clause",
+      "incorrect3": "Bernie Sanders"
+    },
+    {
+      "question": "How many frames of invincibility does Jigglypuff have after Rest?",
+      "correct": "27",
+      "incorrect1": "14",
+      "incorrect2": "17",
+      "incorrect3": "30"
+    },
+    {
+      "question": "How many frame(s) of lagg occur after Peach float cancels?",
+      "correct": "4",
+      "incorrect1": "7",
+      "incorrect2": "6",
+      "incorrect3": "1"
+    },
+    {
+      "question": "How many frames does Ganondorf's aerial down-B lagg?",
+      "correct": "57",
+      "incorrect1": "45",
+      "incorrect2": "25",
+      "incorrect3": "13"
+    },
+    {
+      "question": "How many times can Fox multishine per second, given frame-perfect inputs?",
+      "correct": "7",
+      "incorrect1": "5",
+      "incorrect2": "3",
+      "incorrect3": "6"
+    },
+    {
+      "question": "Who is the G.O.A.T. of Super Smash Bros. Melee?",
+      "correct": "Mang0",
+      "incorrect1": "Hungrybox",
+      "incorrect2": "Leffen",
+      "incorrect3": "Mew2King"
+    },
+    {
+      "question": "What country was Dio hiding in during Stardust Crusaders?",
+      "correct": "Egypt",
+      "incorrect1": "United States",
+      "incorrect2": "Germany",
+      "incorrect3": "India"
+    },
+    {
+      "question": "Erina pendleton thought her first kiss would be with Jonathan but instead,",
+      "correct": "'It was me, DIO!",
+      "incorrect1": "'It was me, Zeppeli!",
+      "incorrect2": "'It was me, Jotaro!'",
+      "incorrect3": "'It was me, Cars!'"
+    },
+    {
+      "question": "What is Dio's father's name?",
+      "correct": "Dario Brando",
+      "incorrect1": "Jotaro Brando",
+      "incorrect2": "Dario Joestar",
+      "incorrect3": "William Zeppeli"
+    },
+    {
+      "question": "Who was the leader of the pillar men?",
+      "correct": "Cars",
+      "incorrect1": "Santana",
+      "incorrect2": "Whammu",
+      "incorrect3": "Esidisi"
+    },
+    {
+      "question": "What is the name of Dio's stand?",
+      "correct": "ZA WARUDO!",
+      "incorrect1": "MAJISHANZU REDDO!",
+      "incorrect2": "SUTA PURACHINA!",
+      "incorrect3": "HAMITTO PAPURU!"
+    },
+    {
+      "question": "What shape is the birthmark on the members of the Joestar bloodline?",
+      "correct": "5-point star",
+      "incorrect1": "4-point star",
+      "incorrect2": "The letter 'J'",
+      "incorrect3": "6-point star"
+    }
+  ]
+}
