@@ -52,12 +52,13 @@ public class QuizBody extends AppCompatActivity {
         ((Button)findViewById(R.id.submit_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(),ResultPage.class);
+                Intent intent = new Intent(getBaseContext(),ResultPage.class);
                 Bundle b = new Bundle();
                 b.putInt("score",QuestionManager.numberOfCorrectAnswers);
                 b.putInt("attempted",QuestionManager.numberOfAttemptedAnswers);
                 intent.putExtras(b);
                 startActivity(intent);
+                finish();
             }
         });
         try{
@@ -151,6 +152,7 @@ public class QuizBody extends AppCompatActivity {
                 b.putInt("attempted",numberOfAttemptedAnswers);
                 intent.putExtras(b);
                 startActivity(intent);
+                getActivity().finish();
             }
 
             public void onClick(View v) {
@@ -188,7 +190,7 @@ public class QuizBody extends AppCompatActivity {
                     public void run() {
                         advanceQuestion();
                     }
-                },300);
+                },500);
                 if(numberOfAttemptedAnswers == NUMBER_OF_QUESTIONS){
                     showResults();
                 }

@@ -19,7 +19,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/progress_bar"
         android:layout_below="@+id/progress_text"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignRight="@+id/progress_text"
+        android:layout_alignEnd="@+id/progress_text"
+        android:layout_alignLeft="@+id/progress_text"
+        android:layout_alignStart="@+id/progress_text" />
 
     <TextView
         android:layout_width="wrap_content"

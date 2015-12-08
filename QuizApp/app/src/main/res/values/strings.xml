@@ -5,4 +5,7 @@
     <string name="question_label">Question:</string>
     <string name="options_label">Options:</string>
     <string name="title_activity_result_page">ResultPage</string>
+    <string name="start_button">Start Quiz</string>
+    <string name="header_text">Welcome to Quiz App!</string>
+    <string name="header_body">Quiz App is an app that\'s funtastical to the max! To begin, press the start quiz button below\n\nYou will be given 10 random multiple choice questions to answer. Answer them all correctly, and you might even win a rad prize! Maybe.</string>
 </resources>

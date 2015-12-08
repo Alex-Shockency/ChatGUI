@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.quizlyworks.quizapp.QuizBody"
+            android:name="com.quizlyworks.quizapp.MainActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,8 +24,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.quizlyworks.quizapp.QuizBody"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="com.quizlyworks.quizapp.ResultPage"
             android:label="@string/title_activity_result_page"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>

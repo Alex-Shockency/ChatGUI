@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".QuizBody"
+            android:name=".MainActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +18,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".QuizBody"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".ResultPage"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_result_page"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
